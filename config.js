@@ -1,6 +1,6 @@
 const CBT_CONFIG = {
   // Dán URL Google Apps Script Web App vào đây sau khi deploy.
-  apiUrl: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
+  apiUrl: "https://script.google.com/macros/s/AKfycbzkgM0JyjrJ3RHVGe3Tg_KgZzuxDY9olKVh2yStF8vW4ikE-3jz5oeiU-Q9IAuc1q0owg/exec",
   siteTitle: "飲食料品製造業 模擬試験",
   defaultDurationMinutes: 70
 };
