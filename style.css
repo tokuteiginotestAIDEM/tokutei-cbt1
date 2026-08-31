@@ -1,0 +1,98 @@
+*{box-sizing:border-box}
+:root{--navy:#172033;--blue:#2463eb;--light:#f3f6fb;--border:#dce2ea;--text:#1d2735;--muted:#687386;--green:#1f9d62;--yellow:#f0b429;--red:#c53945}
+body{margin:0;background:var(--light);color:var(--text);font-family:Arial,"Noto Sans JP",sans-serif}
+button,input,select,textarea{font:inherit}.hidden{display:none!important}
+.topbar{height:64px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 22px;gap:18px;position:sticky;top:0;z-index:10}
+.brand{font-weight:800;white-space:nowrap}.top-title{flex:1;color:#d9e1ef}.timer{background:#fff;color:var(--navy);font-weight:800;padding:8px 12px;border-radius:6px;min-width:85px;text-align:center}
+.page{max-width:1180px;margin:auto;padding:28px 18px}.hero,.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:18px}
+.hero h1{margin:0 0 8px;font-size:28px}.hero p{margin:0;color:var(--muted)}
+.exam-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.exam-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px}.exam-card h2{font-size:19px;margin:0 0 8px}
+.meta{color:var(--muted);font-size:13px;line-height:1.8;margin-bottom:14px}
+.primary{background:var(--blue);border:1px solid var(--blue);color:#fff}.secondary{background:#fff;border:1px solid var(--border);color:var(--text)}
+.danger{background:var(--red);border:1px solid var(--red);color:#fff}.btn{padding:10px 15px;border-radius:7px;cursor:pointer;font-weight:700}.full{width:100%}
+.form-card{max-width:580px;margin:30px auto;background:#fff;border:1px solid var(--border);border-radius:12px;padding:28px}
+.field{margin:14px 0}.field label{display:block;font-weight:700;margin-bottom:7px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid var(--border);border-radius:6px;background:#fff}
+.rules{background:#f8fafc;border:1px solid var(--border);padding:14px;border-radius:7px;color:var(--muted);font-size:13px;line-height:1.8;margin:18px 0}
+.exam-layout{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:calc(100vh - 64px)}
+.sidebar{background:#fff;border-right:1px solid var(--border);padding:17px;display:flex;flex-direction:column;gap:15px}
+.student-box{border-bottom:1px solid var(--border);padding-bottom:12px}.student-box small{color:var(--muted)}
+.question-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:430px;overflow:auto}
+.q-btn{height:34px;border:1px solid var(--border);background:#fff;border-radius:4px;cursor:pointer;font-weight:700}
+.q-btn.current{background:var(--blue);border-color:var(--blue);color:#fff}.q-btn.answered{background:#e9f7ef;border-color:#91d4b2;color:#17724a}.q-btn.marked{box-shadow:inset 0 -4px 0 var(--yellow)}
+.legend{font-size:11px;color:var(--muted);line-height:1.8}.submit{margin-top:auto;background:var(--red);color:#fff;border:0;padding:12px;border-radius:7px;cursor:pointer;font-weight:700}
+.exam-main{padding:26px 4vw;max-width:1050px;width:100%;margin:auto}.q-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+.badge{font-size:11px;background:#e8efff;color:var(--blue);padding:5px 8px;border-radius:4px;font-weight:800}
+.mark{background:#fff;border:1px solid var(--border);padding:8px 12px;border-radius:6px;cursor:pointer}.mark.active{background:#fff5d8;border-color:var(--yellow)}
+.q-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:30px;min-height:430px}.question{font-size:20px;line-height:1.8;font-weight:600;white-space:pre-wrap;margin-bottom:25px}
+.choice{display:flex;gap:12px;padding:15px;border:1px solid var(--border);border-radius:7px;margin:10px 0;cursor:pointer;background:#fff}
+.choice.selected{border:2px solid var(--blue);background:#f3f7ff;padding:14px}.letter{width:30px;height:30px;border:1px solid #b9c1ce;border-radius:50%;display:grid;place-items:center;font-weight:700;flex:none}.selected .letter{background:var(--blue);border-color:var(--blue);color:#fff}
+.nav{display:flex;justify-content:space-between;margin-top:18px}.nav button{padding:10px 18px;border-radius:6px;cursor:pointer;font-weight:700}
+.result-wrap{max-width:900px;margin:30px auto;background:#fff;border:1px solid var(--border);border-radius:12px;padding:26px}
+.score{font-size:60px;font-weight:900;text-align:center;color:var(--blue)}.pass{text-align:center;font-size:20px;font-weight:800;color:var(--green)}.fail{text-align:center;font-size:20px;font-weight:800;color:var(--red)}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:20px 0}.summary-card{background:#f8fafc;border:1px solid var(--border);padding:13px;border-radius:8px}.summary-card b{display:block;font-size:20px;margin-top:5px}
+.note{color:var(--muted);font-size:12px;margin-top:12px}
+.calc-fab{position:fixed;right:15px;bottom:15px;width:32px;height:32px;border-radius:8px;border:1px solid #bec7d3;background:#fff;box-shadow:0 3px 10px #0002;cursor:pointer;z-index:50;font-size:17px;padding:0}
+.calculator{position:fixed;right:15px;bottom:56px;width:190px;background:#fff;border:1px solid #c7ced8;border-radius:9px;box-shadow:0 12px 32px #0003;z-index:49;overflow:hidden}
+.calc-head{height:34px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 9px;font-size:12px}.calc-head button{border:0;background:none;color:#fff;font-size:18px;cursor:pointer}
+.calc-display{width:100%;border:0;border-bottom:1px solid var(--border);padding:10px;text-align:right;font-size:20px;background:#f8fafc}.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px}.calc-grid button{height:34px;border:1px solid var(--border);background:#f8fafc;border-radius:4px;cursor:pointer;font-size:12px}.calc-grid .wide{grid-column:span 2}
+.admin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.admin-tabs button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.toolbar input,.toolbar select{padding:10px;border:1px solid var(--border);border-radius:6px;background:#fff}
+.table-wrap{overflow:auto}.data-table{width:100%;border-collapse:collapse;font-size:13px}.data-table th,.data-table td{padding:10px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}.data-table th{background:#f8fafc}
+.cat-mini{font-size:12px;color:var(--muted);line-height:1.6}.weak{color:var(--red);font-weight:700}.good{color:var(--green);font-weight:700}
+.code-help{background:#f8fafc;border:1px solid var(--border);padding:12px;border-radius:7px;font-size:12px;white-space:pre-wrap}
+@media(max-width:760px){.exam-layout{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--border);padding:10px}.student-box,.legend{display:none}.question-grid{grid-template-columns:repeat(11,34px);max-height:none;overflow-x:auto}.exam-main{padding:15px}.q-card{padding:20px;min-height:360px}.top-title{display:none}.brand{font-size:13px}}
+
+/* ===== AIDEM / アイデムグローバル / TEAM アイトク Branding ===== */
+.brandbar{
+  min-height:78px;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:18px;padding:10px 22px;position:sticky;top:0;z-index:20;
+  box-shadow:0 2px 10px rgba(23,32,51,.06)
+}
+.brand-logos{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-logo{display:block;object-fit:contain}
+.brand-logo.aidem{width:105px;height:40px}
+.brand-logo.global{width:190px;height:42px}
+.brand-logo.aitoku{width:100px;height:32px}
+.brand-sep{font-size:24px;color:#a2acba;font-weight:300}
+.team-brand{display:flex;align-items:center;gap:6px;border-left:1px solid #e4e8ee;padding-left:10px}
+.team-label{font-size:10px;font-weight:800;letter-spacing:.12em;color:#687386}
+.brand-title{flex:1;text-align:right;font-weight:800;color:#263246;font-size:16px}
+.brandbar .timer{background:var(--navy);color:#fff}
+
+.exam-card{position:relative;overflow:hidden}
+.exam-card-visual{height:105px;margin:-8px -8px 12px;display:flex;align-items:center;justify-content:center;background:#fbfcf8;border-radius:8px}
+.exam-mascot{max-height:98px;max-width:92%;object-fit:contain}
+.sidebar-mascot{text-align:center;margin-top:auto}
+.sidebar-mascot img{max-width:105px;max-height:90px;object-fit:contain;opacity:.92}
+.result-wrap{position:relative;overflow:hidden}
+.result-mascot{position:absolute;right:18px;top:15px;width:95px;height:85px;display:flex;align-items:center;justify-content:center;opacity:.9}
+.result-mascot img{max-width:100%;max-height:100%;object-fit:contain}
+.admin-logout{max-width:1180px;margin:12px auto -10px;padding:0 18px;text-align:right}
+
+@media(max-width:900px){
+  .brandbar{padding:8px 12px;gap:8px;flex-wrap:wrap}
+  .brand-logo.aidem{width:76px;height:30px}
+  .brand-logo.global{width:125px;height:31px}
+  .brand-logo.aitoku{width:72px;height:25px}
+  .brand-sep{font-size:18px}
+  .brand-title{width:100%;text-align:left;font-size:13px}
+}
+@media(max-width:560px){
+  .brand-logo.global{width:105px}
+  .brand-logo.aidem{width:66px}
+  .team-label,.brand-sep{display:none}
+  .team-brand{padding-left:5px}
+  .brand-logo.aitoku{width:62px}
+}
+
+/* Final brand adjustments: exact supplied assets, no TEAM text */
+.team-brand{border-left:1px solid #e4e8ee;padding-left:10px;display:flex;align-items:center}
+.team-label{display:none!important}
+.brand-logo.global{width:210px;height:46px;object-fit:contain}
+.brand-logo.aitoku{width:135px;height:42px;object-fit:contain}
+.brand-logo.aidem{object-fit:contain}
+@media(max-width:700px){
+ .brand-logo.global{width:135px;height:32px}
+ .brand-logo.aitoku{width:88px;height:30px}
+}

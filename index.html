@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>飲食料品製造業 模擬試験</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<button id="calcFab" class="calc-fab" title="電卓">🧮</button>
+<div id="calculator" class="calculator hidden">
+  <div class="calc-head"><span>電卓</span><button id="calcClose">×</button></div>
+  <input id="calcDisplay" class="calc-display" value="0" readonly>
+  <div class="calc-grid">
+    <button data-calc="C">C</button><button data-calc="DEL">⌫</button><button data-calc="%">%</button><button data-calc="/">÷</button>
+    <button data-calc="7">7</button><button data-calc="8">8</button><button data-calc="9">9</button><button data-calc="*">×</button>
+    <button data-calc="4">4</button><button data-calc="5">5</button><button data-calc="6">6</button><button data-calc="-">−</button>
+    <button data-calc="1">1</button><button data-calc="2">2</button><button data-calc="3">3</button><button data-calc="+">+</button>
+    <button data-calc="0" class="wide">0</button><button data-calc=".">.</button><button data-calc="=">=</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="student.js"></script>
+</body>
+</html>
