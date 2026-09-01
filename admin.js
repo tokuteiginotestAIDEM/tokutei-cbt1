@@ -6,10 +6,22 @@ const app = document.getElementById("adminApp");
 
 let ADMIN_KEY = "";
 let currentTab = "results";
+
 let resultsCache = [];
 let examsCache = [];
 
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
+
+
+// ======================================================
+// ASSETS
+// ======================================================
+
+const ADMIN_MASCOT =
+  "assets/mascots/mascot-E.1.png";
+
+const DASHBOARD_MASCOT =
+  "assets/mascots/mascot-D.1.png";
 
 
 // ======================================================
@@ -17,45 +29,62 @@ const $ = (id) => document.getElementById(id);
 // ======================================================
 
 function esc(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (m) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[m]));
+
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m])
+  );
 }
 
 
-function adminBrand(title = "模擬試験 管理画面") {
+// ======================================================
+// BRAND HEADER
+// ======================================================
+
+function adminBrand(
+  title = "模擬試験 管理画面"
+) {
+
   return `
+
     <div class="brandbar admin-brandbar">
 
       <div class="brand-logos">
 
         <img
-          src="assets/aidem-logo.png"
+          src="assets/logos/aidem-logo.png"
           class="brand-logo aidem"
           alt="AIDEM"
         >
 
-        <span class="brand-sep">›</span>
+        <span class="brand-sep">
+          ›
+        </span>
 
         <img
-          src="assets/aidem-global-logo.png"
+          src="assets/logos/aidem-global-logo.png"
           class="brand-logo global"
           alt="アイデムグローバル"
         >
 
-        <span class="brand-sep">›</span>
+        <span class="brand-sep">
+          ›
+        </span>
 
         <img
-          src="assets/aitoku-logo.png"
+          src="assets/logos/aitoku-logo.png"
           class="brand-logo aitoku"
           alt="アイトク"
         >
 
       </div>
+
 
       <div class="brand-title">
         ${esc(title)}
@@ -67,168 +96,280 @@ function adminBrand(title = "模擬試験 管理画面") {
 
 
 // ======================================================
-// API - JSONP
+// JSONP API
 // ======================================================
 
 function jsonp(params) {
 
-  return new Promise((resolve, reject) => {
+  return new Promise(
+    (resolve, reject) => {
 
-    const script = document.createElement("script");
-
-    // Apps Script側との互換性を優先して固定 callback を使用
-    window.callback = function(data) {
-
-      clearTimeout(timer);
-
-      try {
-        script.remove();
-      } catch (e) {}
-
-      delete window.callback;
-
-      resolve(data);
-    };
+      const script =
+        document.createElement("script");
 
 
-    const query = new URLSearchParams({
-      ...params,
-      callback: "callback",
-      _: Date.now()
-    });
+      window.callback =
+        function(data) {
+
+          clearTimeout(timer);
+
+          try {
+            script.remove();
+          } catch (e) {}
+
+          delete window.callback;
+
+          resolve(data);
+        };
 
 
-    script.src =
-      CBT_CONFIG.apiUrl +
-      "?" +
-      query.toString();
+      const query =
+        new URLSearchParams({
+          ...params,
+          callback: "callback",
+          _: Date.now()
+        });
 
 
-    const timer = setTimeout(() => {
-
-      try {
-        script.remove();
-      } catch (e) {}
-
-      delete window.callback;
-
-      reject(new Error("API timeout"));
-
-    }, 15000);
+      script.src =
+        CBT_CONFIG.apiUrl +
+        "?" +
+        query.toString();
 
 
-    script.onerror = function() {
+      const timer =
+        setTimeout(
+          () => {
 
-      clearTimeout(timer);
+            try {
+              script.remove();
+            } catch (e) {}
 
-      try {
-        script.remove();
-      } catch (e) {}
+            delete window.callback;
 
-      delete window.callback;
+            reject(
+              new Error("API timeout")
+            );
 
-      reject(new Error("API network error"));
-    };
+          },
+          15000
+        );
 
 
-    document.body.appendChild(script);
-  });
+      script.onerror =
+        function() {
+
+          clearTimeout(timer);
+
+          try {
+            script.remove();
+          } catch (e) {}
+
+          delete window.callback;
+
+          reject(
+            new Error(
+              "API network error"
+            )
+          );
+        };
+
+
+      document.body.appendChild(
+        script
+      );
+    }
+  );
 }
 
 
 // ======================================================
-// POST API
+// ADMIN POST
 // ======================================================
 
 async function postAdmin(payload) {
 
-  payload.adminKey = ADMIN_KEY;
+  payload.adminKey =
+    ADMIN_KEY;
 
-  await fetch(CBT_CONFIG.apiUrl, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(payload)
-  });
 
-  // Apps Scriptへの保存待ち
-  await new Promise((resolve) => setTimeout(resolve, 1200));
+  await fetch(
+    CBT_CONFIG.apiUrl,
+    {
+
+      method:
+        "POST",
+
+      mode:
+        "no-cors",
+
+      headers: {
+
+        "Content-Type":
+          "text/plain;charset=utf-8"
+
+      },
+
+      body:
+        JSON.stringify(
+          payload
+        )
+    }
+  );
+
+
+  // Apps Script の保存待ち
+  await new Promise(
+    resolve =>
+      setTimeout(
+        resolve,
+        1200
+      )
+  );
 }
 
 
 // ======================================================
-// LOGIN
+// LOGIN PAGE
 // ======================================================
 
 function login() {
 
   ADMIN_KEY = "";
-  sessionStorage.removeItem("cbt_admin_key");
+
+  sessionStorage.removeItem(
+    "cbt_admin_key"
+  );
+
 
   app.innerHTML = `
 
-    ${adminBrand("管理者ログイン")}
+    ${adminBrand(
+      "管理者ログイン"
+    )}
 
-    <div class="form-card">
 
-      <h2>管理者ログイン</h2>
+    <div class="admin-login-shell">
 
-      <div class="field">
-        <label>管理パスワード</label>
 
-        <input
-          id="keyInput"
-          type="password"
-          autocomplete="current-password"
-          placeholder="パスワードを入力"
+      <div class="admin-login-art">
+
+        <img
+          src="${ADMIN_MASCOT}"
+          alt=""
         >
+
       </div>
 
-      <button
-        id="loginBtn"
-        class="btn primary full"
-        onclick="doLogin()"
-      >
-        ログイン
-      </button>
 
-      <div id="loginMsg" class="note"></div>
+      <div class="form-card">
+
+        <div class="admin-kicker">
+          AIDEM TOKUTEI CBT
+        </div>
+
+
+        <h2>
+          管理者ログイン
+        </h2>
+
+
+        <p class="note">
+          管理者用パスワードを入力してください。
+        </p>
+
+
+        <div class="field">
+
+          <label>
+            管理パスワード
+          </label>
+
+
+          <input
+            id="keyInput"
+            type="password"
+            autocomplete="current-password"
+            placeholder="パスワードを入力"
+          >
+
+        </div>
+
+
+        <button
+          id="loginBtn"
+          class="btn primary full"
+          onclick="doLogin()"
+        >
+          ログイン
+        </button>
+
+
+        <div
+          id="loginMsg"
+          class="note"
+        ></div>
+
+      </div>
 
     </div>
   `;
 
 
-  const input = $("keyInput");
+  const input =
+    $("keyInput");
+
 
   if (input) {
 
-    input.addEventListener("keydown", function(e) {
+    input.addEventListener(
+      "keydown",
+      function(e) {
 
-      if (e.key === "Enter") {
-        doLogin();
+        if (
+          e.key === "Enter"
+        ) {
+
+          doLogin();
+        }
       }
+    );
 
-    });
 
     input.focus();
   }
 }
 
 
-window.doLogin = async function() {
+// ======================================================
+// LOGIN PROCESS
+// ======================================================
 
-  const input = $("keyInput");
-  const btn = $("loginBtn");
-  const msg = $("loginMsg");
+window.doLogin =
+async function() {
 
-  const key = input ? input.value.trim() : "";
+  const input =
+    $("keyInput");
+
+  const btn =
+    $("loginBtn");
+
+  const msg =
+    $("loginMsg");
+
+
+  const key =
+    input
+      ? input.value.trim()
+      : "";
+
 
   if (!key) {
 
     if (msg) {
-      msg.textContent = "パスワードを入力してください。";
+
+      msg.textContent =
+        "パスワードを入力してください。";
     }
 
     return;
@@ -236,37 +377,60 @@ window.doLogin = async function() {
 
 
   if (btn) {
-    btn.disabled = true;
-    btn.textContent = "確認中...";
+
+    btn.disabled =
+      true;
+
+    btn.textContent =
+      "確認中...";
   }
 
+
   if (msg) {
+
     msg.textContent = "";
   }
 
 
   try {
 
-    const data = await jsonp({
-      action: "adminPing",
-      key: key
-    });
+    const data =
+      await jsonp({
+
+        action:
+          "adminPing",
+
+        key:
+          key
+
+      });
 
 
-    console.log("adminPing result:", data);
+    console.log(
+      "adminPing result:",
+      data
+    );
 
 
-    if (!data || data.ok !== true) {
+    if (
+      !data ||
+      data.ok !== true
+    ) {
 
       throw new Error(
-        data && data.message
+        data &&
+        data.message
+
           ? data.message
+
           : "Password rejected"
       );
     }
 
 
-    ADMIN_KEY = key;
+    ADMIN_KEY =
+      key;
+
 
     sessionStorage.setItem(
       "cbt_admin_key",
@@ -279,11 +443,18 @@ window.doLogin = async function() {
 
   } catch (error) {
 
-    console.error("Login error:", error);
+    console.error(
+      "Login error:",
+      error
+    );
+
 
     ADMIN_KEY = "";
 
-    sessionStorage.removeItem("cbt_admin_key");
+
+    sessionStorage.removeItem(
+      "cbt_admin_key"
+    );
 
 
     if (msg) {
@@ -300,8 +471,12 @@ window.doLogin = async function() {
 
 
     if (btn) {
-      btn.disabled = false;
-      btn.textContent = "ログイン";
+
+      btn.disabled =
+        false;
+
+      btn.textContent =
+        "ログイン";
     }
   }
 };
@@ -311,13 +486,16 @@ window.doLogin = async function() {
 // LOGOUT
 // ======================================================
 
-window.logout = function() {
+window.logout =
+function() {
 
   ADMIN_KEY = "";
+
 
   sessionStorage.removeItem(
     "cbt_admin_key"
   );
+
 
   login();
 };
@@ -335,6 +513,7 @@ async function dashboard() {
       "飲食料品製造業 模擬試験 管理画面"
     )}
 
+
     <div class="admin-logout">
 
       <button
@@ -349,7 +528,33 @@ async function dashboard() {
 
     <div class="page">
 
+
+      <div class="admin-dashboard-head">
+
+        <div>
+
+          <h1>
+            管理ダッシュボード
+          </h1>
+
+          <p>
+            受験結果の確認、試験の公開管理、
+            新しい試験の追加ができます。
+          </p>
+
+        </div>
+
+
+        <img
+          src="${DASHBOARD_MASCOT}"
+          alt=""
+        >
+
+      </div>
+
+
       <div class="admin-tabs">
+
 
         <button
           id="tabResults"
@@ -387,55 +592,88 @@ async function dashboard() {
         読み込み中...
       </div>
 
+
     </div>
   `;
 
 
-  showTab(currentTab);
+  showTab(
+    currentTab
+  );
 }
 
 
 // ======================================================
-// TABS
+// TAB CONTROL
 // ======================================================
 
-window.showTab = async function(tab) {
+window.showTab =
+async function(tab) {
 
-  currentTab = tab;
+  currentTab =
+    tab;
 
 
-  ["Results", "Exams", "Upload"].forEach((name) => {
+  [
+    "Results",
+    "Exams",
+    "Upload"
 
-    const element = $("tab" + name);
+  ].forEach(
+    name => {
 
-    if (element) {
-      element.classList.remove("active");
+      const element =
+        $("tab" + name);
+
+
+      if (element) {
+
+        element.classList.remove(
+          "active"
+        );
+      }
     }
-
-  });
+  );
 
 
   const cap =
-    tab.charAt(0).toUpperCase() +
+    tab.charAt(0).toUpperCase()
+    +
     tab.slice(1);
 
 
-  const active = $("tab" + cap);
+  const active =
+    $("tab" + cap);
+
 
   if (active) {
-    active.classList.add("active");
+
+    active.classList.add(
+      "active"
+    );
   }
 
 
-  if (tab === "results") {
+  if (
+    tab === "results"
+  ) {
+
     await loadResults();
   }
 
-  if (tab === "exams") {
+
+  if (
+    tab === "exams"
+  ) {
+
     await loadExams();
   }
 
-  if (tab === "upload") {
+
+  if (
+    tab === "upload"
+  ) {
+
     uploadForm();
   }
 };
@@ -447,9 +685,13 @@ window.showTab = async function(tab) {
 
 async function loadResults() {
 
-  const content = $("content");
+  const content =
+    $("content");
 
-  if (!content) return;
+
+  if (!content) {
+    return;
+  }
 
 
   content.innerHTML =
@@ -458,13 +700,22 @@ async function loadResults() {
 
   try {
 
-    const data = await jsonp({
-      action: "adminResults",
-      key: ADMIN_KEY
-    });
+    const data =
+      await jsonp({
+
+        action:
+          "adminResults",
+
+        key:
+          ADMIN_KEY
+
+      });
 
 
-    if (!data || data.ok !== true) {
+    if (
+      !data ||
+      data.ok !== true
+    ) {
 
       throw new Error(
         "adminResults failed"
@@ -473,8 +724,12 @@ async function loadResults() {
 
 
     resultsCache =
-      Array.isArray(data.results)
+      Array.isArray(
+        data.results
+      )
+
         ? data.results
+
         : [];
 
 
@@ -483,34 +738,46 @@ async function loadResults() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
+
 
     content.innerHTML = `
+
       <div class="weak">
         受験結果の読み込みに失敗しました。
       </div>
+
     `;
   }
 }
 
 
 // ======================================================
-// RESULTS TABLE
+// RENDER RESULTS
 // ======================================================
 
 function renderResults() {
 
-  const content = $("content");
+  const content =
+    $("content");
 
-  if (!content) return;
+
+  if (!content) {
+    return;
+  }
 
 
   content.innerHTML = `
 
-    <h2>受験結果</h2>
+    <h2>
+      受験結果
+    </h2>
 
 
     <div class="toolbar">
+
 
       <input
         id="fCompany"
@@ -556,7 +823,8 @@ function renderResults() {
     </div>
 
 
-    <div id="resultTable"></div>
+    <div id="resultTable">
+    </div>
   `;
 
 
@@ -564,61 +832,101 @@ function renderResults() {
 }
 
 
-window.filterResults = function() {
+// ======================================================
+// FILTER RESULTS
+// ======================================================
+
+window.filterResults =
+function() {
 
   const company =
-    ($("fCompany")?.value || "")
+    (
+      $("fCompany")?.value ||
+      ""
+    )
       .toLowerCase();
 
 
   const name =
-    ($("fName")?.value || "")
+    (
+      $("fName")?.value ||
+      ""
+    )
       .toLowerCase();
 
 
   const pass =
-    $("fPass")?.value || "";
+    $("fPass")?.value ||
+    "";
 
 
   const rows =
-    resultsCache.filter((r) => {
+    resultsCache.filter(
+      r => {
 
-      const companyOK =
-        (r.company || "")
-          .toLowerCase()
-          .includes(company);
-
-
-      const nameOK =
-        (r.studentName || "")
-          .toLowerCase()
-          .includes(name);
-
-
-      const passOK =
-        pass === "" ||
-        String(r.passed) === pass;
+        const companyOK =
+          (
+            r.company ||
+            ""
+          )
+            .toLowerCase()
+            .includes(
+              company
+            );
 
 
-      return (
-        companyOK &&
-        nameOK &&
-        passOK
-      );
-    });
+        const nameOK =
+          (
+            r.studentName ||
+            ""
+          )
+            .toLowerCase()
+            .includes(
+              name
+            );
 
 
-  const table = $("resultTable");
+        const passOK =
 
-  if (!table) return;
+          pass === ""
+
+          ||
+
+          String(
+            r.passed
+          ) === pass;
+
+
+        return (
+
+          companyOK
+          &&
+          nameOK
+          &&
+          passOK
+
+        );
+      }
+    );
+
+
+  const table =
+    $("resultTable");
+
+
+  if (!table) {
+    return;
+  }
 
 
   if (!rows.length) {
 
     table.innerHTML = `
+
       <div class="note">
         該当する受験結果はありません。
       </div>
+
     `;
 
     return;
@@ -636,19 +944,12 @@ window.filterResults = function() {
           <tr>
 
             <th>日時</th>
-
             <th>企業名</th>
-
             <th>氏名</th>
-
             <th>試験</th>
-
             <th>得点</th>
-
             <th>判定</th>
-
             <th>分野別</th>
-
             <th>重点復習</th>
 
           </tr>
@@ -658,91 +959,119 @@ window.filterResults = function() {
 
         <tbody>
 
-          ${rows.map((r) => `
+          ${rows.map(
+            r => `
 
-            <tr>
+              <tr>
 
-              <td>
-                ${esc(r.timestamp)}
-              </td>
-
-
-              <td>
-                ${esc(r.company)}
-              </td>
+                <td>
+                  ${esc(
+                    r.timestamp
+                  )}
+                </td>
 
 
-              <td>
-                ${esc(r.studentName)}
-              </td>
+                <td>
+                  ${esc(
+                    r.company
+                  )}
+                </td>
 
 
-              <td>
-                ${esc(r.examTitle)}
-              </td>
+                <td>
+                  ${esc(
+                    r.studentName
+                  )}
+                </td>
 
 
-              <td>
-
-                <b>
-
-                  ${r.correct}/${r.total}
-
-                  (${r.percent}%)
-
-                </b>
-
-              </td>
+                <td>
+                  ${esc(
+                    r.examTitle
+                  )}
+                </td>
 
 
-              <td
-                class="${
-                  r.passed
-                    ? "good"
-                    : "weak"
-                }"
-              >
+                <td>
 
-                ${
-                  r.passed
-                    ? "合格"
-                    : "不合格"
-                }
+                  <b>
 
-              </td>
+                    ${r.correct}
+                    /
+                    ${r.total}
+
+                    (${r.percent}%)
+
+                  </b>
+
+                </td>
 
 
-              <td class="cat-mini">
+                <td
+                  class="${
+                    r.passed
+                      ? "good"
+                      : "weak"
+                  }"
+                >
 
-                ${
-                  (r.categories || [])
-                    .map((c) =>
+                  ${
+                    r.passed
+                      ? "合格"
+                      : "不合格"
+                  }
 
-                      `${esc(c.category)}:
-                       ${c.correct}/${c.total}
-                       (${c.percent}%)`
+                </td>
+
+
+                <td class="cat-mini">
+
+                  ${
+                    (
+                      r.categories ||
+                      []
+                    )
+
+                    .map(
+                      c =>
+
+                        `${esc(
+                          c.category
+                        )}:
+                        ${c.correct}/${c.total}
+                        (${c.percent}%)`
 
                     )
+
                     .join("<br>")
-                }
+                  }
 
-              </td>
+                </td>
 
 
-              <td class="weak">
+                <td class="weak">
 
-                ${
-                  esc(
-                    (r.weakCategories || [])
-                      .join("・") || "-"
-                  )
-                }
+                  ${
+                    esc(
 
-              </td>
+                      (
+                        r.weakCategories ||
+                        []
+                      )
+                        .join("・")
 
-            </tr>
+                      ||
+                      "-"
+                    )
+                  }
 
-          `).join("")}
+                </td>
+
+              </tr>
+
+            `
+
+          ).join("")}
 
         </tbody>
 
@@ -754,10 +1083,11 @@ window.filterResults = function() {
 
 
 // ======================================================
-// EXPORT CSV
+// EXPORT RESULTS CSV
 // ======================================================
 
-window.exportResults = function() {
+window.exportResults =
+function() {
 
   const rows = [[
 
@@ -775,77 +1105,124 @@ window.exportResults = function() {
   ]];
 
 
-  resultsCache.forEach((r) => {
+  resultsCache.forEach(
+    r => {
 
-    rows.push([
+      rows.push([
 
-      r.timestamp,
-      r.company,
-      r.studentName,
-      r.examTitle,
-      r.correct,
-      r.total,
-      r.percent,
-      r.passed,
+        r.timestamp,
+        r.company,
+        r.studentName,
+        r.examTitle,
+        r.correct,
+        r.total,
+        r.percent,
+        r.passed,
 
-      (r.categories || [])
-        .map((c) =>
-          `${c.category}:${c.correct}/${c.total}(${c.percent}%)`
+
+        (
+          r.categories ||
+          []
         )
-        .join(" | "),
 
-      (r.weakCategories || [])
-        .join(" | ")
+          .map(
+            c =>
 
-    ]);
-  });
+              `${c.category}:${c.correct}/${c.total}(${c.percent}%)`
+
+          )
+
+          .join(" | "),
+
+
+        (
+          r.weakCategories ||
+          []
+        )
+
+          .join(" | ")
+
+      ]);
+    }
+  );
 
 
   const csv =
-    rows.map((row) =>
 
-      row.map((value) => {
+    rows.map(
+      row =>
 
-        value = String(value ?? "");
+        row.map(
+          value => {
 
-        return /[",\n]/.test(value)
+            value =
+              String(
+                value ??
+                ""
+              );
 
-          ? `"${value.replace(/"/g, '""')}"`
 
-          : value;
+            return (
+              /[",\n]/.test(
+                value
+              )
+            )
 
-      }).join(",")
+              ? `"${value.replace(
+                  /"/g,
+                  '""'
+                )}"`
+
+              : value;
+
+          }
+        ).join(",")
 
     ).join("\n");
 
 
   const blob =
     new Blob(
-      ["\ufeff" + csv],
+
+      [
+        "\ufeff" +
+        csv
+      ],
+
       {
         type:
           "text/csv;charset=utf-8"
       }
+
     );
 
 
   const link =
-    document.createElement("a");
+    document.createElement(
+      "a"
+    );
 
 
   link.href =
-    URL.createObjectURL(blob);
+    URL.createObjectURL(
+      blob
+    );
 
 
   link.download =
     "cbt_results.csv";
 
 
-  document.body.appendChild(link);
+  document.body.appendChild(
+    link
+  );
+
 
   link.click();
 
+
   link.remove();
+
 
   URL.revokeObjectURL(
     link.href
@@ -854,14 +1231,18 @@ window.exportResults = function() {
 
 
 // ======================================================
-// EXAMS
+// EXAM MANAGEMENT
 // ======================================================
 
 async function loadExams() {
 
-  const content = $("content");
+  const content =
+    $("content");
 
-  if (!content) return;
+
+  if (!content) {
+    return;
+  }
 
 
   content.innerHTML =
@@ -870,13 +1251,22 @@ async function loadExams() {
 
   try {
 
-    const data = await jsonp({
-      action: "adminExams",
-      key: ADMIN_KEY
-    });
+    const data =
+      await jsonp({
+
+        action:
+          "adminExams",
+
+        key:
+          ADMIN_KEY
+
+      });
 
 
-    if (!data || data.ok !== true) {
+    if (
+      !data ||
+      data.ok !== true
+    ) {
 
       throw new Error(
         "adminExams failed"
@@ -885,20 +1275,29 @@ async function loadExams() {
 
 
     examsCache =
-      Array.isArray(data.exams)
+      Array.isArray(
+        data.exams
+      )
+
         ? data.exams
+
         : [];
 
 
-    if (!examsCache.length) {
+    if (
+      !examsCache.length
+    ) {
 
       content.innerHTML = `
 
-        <h2>試験管理</h2>
+        <h2>
+          試験管理
+        </h2>
 
         <div class="note">
           登録されている試験はありません。
         </div>
+
       `;
 
       return;
@@ -907,7 +1306,9 @@ async function loadExams() {
 
     content.innerHTML = `
 
-      <h2>試験管理</h2>
+      <h2>
+        試験管理
+      </h2>
 
 
       <div class="table-wrap">
@@ -919,17 +1320,11 @@ async function loadExams() {
             <tr>
 
               <th>ID</th>
-
               <th>試験名</th>
-
               <th>問題数</th>
-
               <th>時間</th>
-
               <th>合格基準</th>
-
               <th>公開</th>
-
               <th>操作</th>
 
             </tr>
@@ -939,79 +1334,99 @@ async function loadExams() {
 
           <tbody>
 
-            ${examsCache.map((e) => `
+            ${examsCache.map(
+              e => `
 
-              <tr>
+                <tr>
 
-                <td>
-                  ${esc(e.id)}
-                </td>
-
-
-                <td>
-                  ${esc(e.title)}
-                </td>
+                  <td>
+                    ${esc(
+                      e.id
+                    )}
+                  </td>
 
 
-                <td>
-                  ${e.questionCount ?? 0}
-                </td>
+                  <td>
+                    ${esc(
+                      e.title
+                    )}
+                  </td>
 
 
-                <td>
-                  ${e.durationMinutes ?? 70}分
-                </td>
+                  <td>
+                    ${
+                      e.questionCount ??
+                      0
+                    }
+                  </td>
 
 
-                <td>
-                  ${e.passPercent ?? 70}%
-                </td>
+                  <td>
+                    ${
+                      e.durationMinutes ??
+                      70
+                    }分
+                  </td>
 
 
-                <td>
-
-                  ${
-                    e.published
-                      ? "公開中"
-                      : "非公開"
-                  }
-
-                </td>
+                  <td>
+                    ${
+                      e.passPercent ??
+                      70
+                    }%
+                  </td>
 
 
-                <td>
-
-                  <button
-                    class="btn secondary"
-                    onclick="togglePublish(
-                      '${esc(e.id)}',
-                      ${!e.published}
-                    )"
-                  >
+                  <td>
 
                     ${
                       e.published
-                        ? "非公開にする"
-                        : "公開する"
+
+                        ? '<span class="good">公開中</span>'
+
+                        : '<span class="note">非公開</span>'
                     }
 
-                  </button>
+                  </td>
 
 
-                  <button
-                    class="btn danger"
-                    onclick="deleteExam(
-                      '${esc(e.id)}'
-                    )"
-                  >
-                    削除
-                  </button>
+                  <td>
 
-                </td>
+                    <button
+                      class="btn secondary"
+                      onclick="togglePublish(
+                        '${esc(e.id)}',
+                        ${!e.published}
+                      )"
+                    >
 
-              </tr>
+                      ${
+                        e.published
 
-            `).join("")}
+                          ? "非公開にする"
+
+                          : "公開する"
+                      }
+
+                    </button>
+
+
+                    <button
+                      class="btn danger"
+                      onclick="deleteExam(
+                        '${esc(e.id)}'
+                      )"
+                    >
+                      削除
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              `
+
+            ).join("")}
 
           </tbody>
 
@@ -1023,30 +1438,45 @@ async function loadExams() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
+
 
     content.innerHTML = `
+
       <div class="weak">
         試験一覧の読み込みに失敗しました。
       </div>
+
     `;
   }
-};
+}
 
 
 // ======================================================
-// PUBLISH
+// PUBLISH / UNPUBLISH
 // ======================================================
 
 window.togglePublish =
-async function(id, published) {
+async function(
+  id,
+  published
+) {
 
   try {
 
     await postAdmin({
-      action: "setPublished",
-      id: id,
-      published: published
+
+      action:
+        "setPublished",
+
+      id:
+        id,
+
+      published:
+        published
+
     });
 
 
@@ -1055,7 +1485,10 @@ async function(id, published) {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
+
 
     alert(
       "公開状態の変更に失敗しました。"
@@ -1071,19 +1504,27 @@ async function(id, published) {
 window.deleteExam =
 async function(id) {
 
-  const ok = confirm(
-    "この試験を削除しますか？"
-  );
+  const ok =
+    confirm(
+      "この試験を削除しますか？"
+    );
 
 
-  if (!ok) return;
+  if (!ok) {
+    return;
+  }
 
 
   try {
 
     await postAdmin({
-      action: "deleteExam",
-      id: id
+
+      action:
+        "deleteExam",
+
+      id:
+        id
+
     });
 
 
@@ -1092,7 +1533,10 @@ async function(id) {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
+
 
     alert(
       "試験の削除に失敗しました。"
@@ -1107,19 +1551,27 @@ async function(id) {
 
 function uploadForm() {
 
-  const content = $("content");
+  const content =
+    $("content");
 
-  if (!content) return;
+
+  if (!content) {
+    return;
+  }
 
 
   content.innerHTML = `
 
-    <h2>新しい試験を追加</h2>
+    <h2>
+      新しい試験を追加
+    </h2>
 
 
     <div class="field">
 
-      <label>試験名</label>
+      <label>
+        試験名
+      </label>
 
       <input
         id="examTitle"
@@ -1131,7 +1583,9 @@ function uploadForm() {
 
     <div class="field">
 
-      <label>試験ID</label>
+      <label>
+        試験ID
+      </label>
 
       <input
         id="examId"
@@ -1143,7 +1597,9 @@ function uploadForm() {
 
     <div class="field">
 
-      <label>制限時間</label>
+      <label>
+        制限時間
+      </label>
 
       <input
         id="duration"
@@ -1157,7 +1613,9 @@ function uploadForm() {
 
     <div class="field">
 
-      <label>合格基準 (%)</label>
+      <label>
+        合格基準 (%)
+      </label>
 
       <input
         id="passPercent"
@@ -1172,7 +1630,9 @@ function uploadForm() {
 
     <div class="field">
 
-      <label>CSVファイル</label>
+      <label>
+        CSVファイル
+      </label>
 
       <input
         id="csvFile"
@@ -1191,8 +1651,7 @@ No,Category,Question,A,B,C,D,Correct,Explanation
 
 <br><br>
 
-Correct は
-A / B / C / D
+Correct は A / B / C / D
 
 <br><br>
 
@@ -1218,7 +1677,7 @@ A / B / C / D
       class="note"
     ></div>
   `;
-};
+}
 
 
 // ======================================================
@@ -1229,7 +1688,9 @@ window.uploadExam =
 async function() {
 
   const file =
-    $("csvFile")?.files?.[0];
+    $("csvFile")
+      ?.files
+      ?.[0];
 
 
   if (!file) {
@@ -1243,14 +1704,21 @@ async function() {
 
 
   const title =
-    $("examTitle")?.value.trim();
+    $("examTitle")
+      ?.value
+      .trim();
 
 
   const id =
-    $("examId")?.value.trim();
+    $("examId")
+      ?.value
+      .trim();
 
 
-  if (!title || !id) {
+  if (
+    !title ||
+    !id
+  ) {
 
     alert(
       "試験名と試験IDを入力してください。"
@@ -1263,13 +1731,17 @@ async function() {
   const duration =
     Number(
       $("duration")?.value
-    ) || 70;
+    )
+    ||
+    70;
 
 
   const passPercent =
     Number(
       $("passPercent")?.value
-    ) || 70;
+    )
+    ||
+    70;
 
 
   const button =
@@ -1283,7 +1755,12 @@ async function() {
   try {
 
     if (button) {
-      button.disabled = true;
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        "保存中...";
     }
 
 
@@ -1292,10 +1769,14 @@ async function() {
 
 
     const questions =
-      parseCSV(text);
+      parseCSV(
+        text
+      );
 
 
-    if (!questions.length) {
+    if (
+      !questions.length
+    ) {
 
       throw new Error(
         "CSVに問題がありません。"
@@ -1307,31 +1788,40 @@ async function() {
 
       message.textContent =
         `${questions.length}問を送信中...`;
-
     }
 
 
     await postAdmin({
 
-      action: "saveExam",
+      action:
+        "saveExam",
+
 
       exam: {
 
-        id: id,
+        id:
+          id,
 
-        title: title,
+
+        title:
+          title,
+
 
         subtitle:
           "飲食料品製造業",
 
+
         durationMinutes:
           duration,
+
 
         passPercent:
           passPercent,
 
+
         published:
           false,
+
 
         questions:
           questions
@@ -1343,13 +1833,14 @@ async function() {
 
       message.textContent =
         `✅ ${questions.length}問を保存しました。試験管理から公開してください。`;
-
     }
 
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
 
 
     if (message) {
@@ -1362,7 +1853,12 @@ async function() {
   } finally {
 
     if (button) {
-      button.disabled = false;
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "アップロードして保存";
     }
   }
 };
@@ -1374,11 +1870,12 @@ async function() {
 
 function parseCSV(text) {
 
-  // Excel UTF-8 BOM対策
-  text = text.replace(
-    /^\uFEFF/,
-    ""
-  );
+  // Excel UTF-8 BOM
+  text =
+    text.replace(
+      /^\uFEFF/,
+      ""
+    );
 
 
   const rows = [];
@@ -1410,31 +1907,37 @@ function parseCSV(text) {
       cell += '"';
 
       i++;
-
     }
+
 
     else if (
       char === '"'
     ) {
 
-      quoted = !quoted;
-
+      quoted =
+        !quoted;
     }
+
 
     else if (
       char === "," &&
       !quoted
     ) {
 
-      row.push(cell);
+      row.push(
+        cell
+      );
 
       cell = "";
-
     }
 
+
     else if (
-      (char === "\n" ||
-       char === "\r") &&
+      (
+        char === "\n" ||
+        char === "\r"
+      )
+      &&
       !quoted
     ) {
 
@@ -1442,52 +1945,63 @@ function parseCSV(text) {
         char === "\r" &&
         next === "\n"
       ) {
+
         i++;
       }
 
 
-      row.push(cell);
+      row.push(
+        cell
+      );
 
 
       if (
         row.some(
-          (value) =>
+          value =>
             value.trim() !== ""
         )
       ) {
 
-        rows.push(row);
+        rows.push(
+          row
+        );
       }
 
 
       row = [];
       cell = "";
-
     }
+
 
     else {
 
-      cell += char;
-
+      cell +=
+        char;
     }
   }
 
 
-  row.push(cell);
+  row.push(
+    cell
+  );
 
 
   if (
     row.some(
-      (value) =>
+      value =>
         value.trim() !== ""
     )
   ) {
 
-    rows.push(row);
+    rows.push(
+      row
+    );
   }
 
 
-  if (rows.length < 2) {
+  if (
+    rows.length < 2
+  ) {
 
     return [];
   }
@@ -1495,19 +2009,22 @@ function parseCSV(text) {
 
   const headers =
     rows[0].map(
-      (value) =>
-        value.trim().toLowerCase()
+      value =>
+        value
+          .trim()
+          .toLowerCase()
     );
 
 
   const index =
-    (name) =>
+    name =>
       headers.indexOf(
         name.toLowerCase()
       );
 
 
   const required = [
+
     "No",
     "Category",
     "Question",
@@ -1516,12 +2033,17 @@ function parseCSV(text) {
     "C",
     "D",
     "Correct"
+
   ];
 
 
-  for (const name of required) {
+  for (
+    const name of required
+  ) {
 
-    if (index(name) === -1) {
+    if (
+      index(name) === -1
+    ) {
 
       console.error(
         "Missing CSV column:",
@@ -1534,94 +2056,160 @@ function parseCSV(text) {
 
 
   return rows
+
     .slice(1)
-    .map((r, i) => {
 
-      const correctLetter =
-        (
-          r[index("Correct")] || ""
-        )
-          .trim()
-          .toUpperCase();
+    .map(
+      (r, i) => {
 
-
-      const correctIndex =
-        ["A", "B", "C", "D"]
-          .indexOf(
-            correctLetter
-          );
-
-
-      return {
-
-        id:
-          Number(
-            r[index("No")]
-          ) || i + 1,
-
-
-        category:
-          r[index("Category")] || "",
-
-
-        question:
-          r[index("Question")] || "",
-
-
-        choices: [
-
-          r[index("A")] || "",
-
-          r[index("B")] || "",
-
-          r[index("C")] || "",
-
-          r[index("D")] || ""
-
-        ],
-
-
-        correct:
-          correctIndex,
-
-
-        explanation:
-
-          index("Explanation") >= 0
-
-            ? (
-                r[
-                  index("Explanation")
-                ] || ""
+        const correctLetter =
+          (
+            r[
+              index(
+                "Correct"
               )
+            ]
+            ||
+            ""
+          )
+            .trim()
+            .toUpperCase();
 
-            : ""
-      };
 
-    })
+        const correctIndex =
+          [
+            "A",
+            "B",
+            "C",
+            "D"
+          ]
+            .indexOf(
+              correctLetter
+            );
+
+
+        return {
+
+          id:
+
+            Number(
+              r[
+                index(
+                  "No"
+                )
+              ]
+            )
+            ||
+            i + 1,
+
+
+          category:
+
+            r[
+              index(
+                "Category"
+              )
+            ]
+            ||
+            "",
+
+
+          question:
+
+            r[
+              index(
+                "Question"
+              )
+            ]
+            ||
+            "",
+
+
+          choices: [
+
+            r[
+              index("A")
+            ]
+            ||
+            "",
+
+            r[
+              index("B")
+            ]
+            ||
+            "",
+
+            r[
+              index("C")
+            ]
+            ||
+            "",
+
+            r[
+              index("D")
+            ]
+            ||
+            ""
+
+          ],
+
+
+          correct:
+            correctIndex,
+
+
+          explanation:
+
+            index(
+              "Explanation"
+            ) >= 0
+
+              ? (
+                  r[
+                    index(
+                      "Explanation"
+                    )
+                  ]
+                  ||
+                  ""
+                )
+
+              : ""
+        };
+      }
+    )
+
 
     .filter(
-      (q) =>
-        q.question.trim() !== "" &&
+      q =>
+
+        q.question.trim() !== ""
+
+        &&
+
         q.correct >= 0
     );
 }
 
 
 // ======================================================
-// START
+// START ADMIN
 // ======================================================
 
 function startAdmin() {
 
   if (
-    typeof CBT_CONFIG === "undefined"
+    typeof CBT_CONFIG ===
+    "undefined"
   ) {
 
     app.innerHTML = `
+
       <div class="form-card">
 
-        <h2>設定エラー</h2>
+        <h2>
+          設定エラー
+        </h2>
 
         <p>
           config.js を読み込めません。
@@ -1639,9 +2227,12 @@ function startAdmin() {
   ) {
 
     app.innerHTML = `
+
       <div class="form-card">
 
-        <h2>API URLが設定されていません</h2>
+        <h2>
+          API URLが設定されていません
+        </h2>
 
         <p>
           config.js の apiUrl を確認してください。
@@ -1654,8 +2245,9 @@ function startAdmin() {
   }
 
 
-  // 安全のため管理画面を開くたびにログイン
+  // 管理画面を開くたびにログイン
   ADMIN_KEY = "";
+
 
   sessionStorage.removeItem(
     "cbt_admin_key"
@@ -1665,5 +2257,9 @@ function startAdmin() {
   login();
 }
 
+
+// ======================================================
+// START
+// ======================================================
 
 startAdmin();
