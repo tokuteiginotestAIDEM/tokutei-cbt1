@@ -249,17 +249,168 @@ function loginPage() {
 
     ${brandBar(CBT_CONFIG.siteTitle)}
 
-    <div class="page">
+    <main class="student-login-shell">
 
-      <div class="hero">
+      <section class="student-login-hero">
 
-        <h1>
-          飲食料品製造業 模擬試験
+        <img
+          src="assets/mascots/mascot-D.2.png"
+          class="student-login-mascot mascot-left"
+          alt=""
+        >
+
+        <img
+          src="assets/mascots/mascot-E.2.png"
+          class="student-login-mascot mascot-right"
+          alt=""
+        >
+
+        <div class="student-login-badge">
+          CBT 模擬試験
+        </div>
+
+        <h1 class="student-login-title">
+          飲食料品製造業<br>
+          模擬試験
         </h1>
 
-        <p>
-          本番に近い形式で練習できます。
+        <p class="student-login-lead">
+          本番に近い形式で、試験に向けた実践練習ができます。
         </p>
+
+        <div class="student-login-features">
+
+          <span>⏱ 70分</span>
+
+          <span>📝 CBT形式</span>
+
+          <span>📊 分野別結果</span>
+
+        </div>
+
+      </section>
+
+
+      <section class="student-login-card">
+
+        <div class="login-main-character">
+
+          <img
+            src="assets/mascots/mascot-A.png"
+            alt=""
+          >
+
+        </div>
+
+
+        <div class="login-card-heading">
+
+          <div class="login-card-icon">
+            ✉
+          </div>
+
+          <div>
+
+            <h2>
+              受験者確認
+            </h2>
+
+            <p>
+              登録されているメールアドレスを入力してください。
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="login-input-area">
+
+          <label for="emailInput">
+            メールアドレス
+          </label>
+
+          <input
+            id="emailInput"
+            type="email"
+            autocomplete="email"
+            placeholder="example@gmail.com"
+          >
+
+
+          <div
+            id="emailMessage"
+            class="login-error"
+          ></div>
+
+
+          <button
+            id="emailLoginBtn"
+            class="student-login-button"
+            type="button"
+            onclick="checkEmail()"
+          >
+
+            確認して試験一覧へ
+
+            <span>
+              →
+            </span>
+
+          </button>
+
+        </div>
+
+
+        <div class="login-security-note">
+          登録済みの受験者のみ利用できます。
+        </div>
+
+      </section>
+
+
+      <section class="student-login-message">
+
+        <div class="student-footer-line"></div>
+
+        <p class="student-footer-main">
+          本番を想定した模擬試験で、実践力を身につけよう。
+        </p>
+
+        <p class="student-footer-sub">
+          繰り返し練習して、自信を持って本番へ。
+        </p>
+
+      </section>
+
+    </main>
+  `;
+
+
+  const input =
+    $("emailInput");
+
+  if (input) {
+
+    input.addEventListener(
+      "keydown",
+      e => {
+
+        if (
+          e.key === "Enter"
+        ) {
+
+          checkEmail();
+
+        }
+
+      }
+    );
+
+    input.focus();
+
+  }
+}
 
       </div>
 
