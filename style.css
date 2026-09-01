@@ -1114,3 +1114,92 @@ button{
     font-size:50px;
   }
 }
+/* =====================================================
+   STUDENT PAGE - LIGHT GREEN DESIGN
+===================================================== */
+
+.student-page{
+  min-height:100vh;
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(255,255,255,.8) 0,
+      rgba(255,255,255,0) 28%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(255,255,255,.55) 0,
+      rgba(255,255,255,0) 25%
+    ),
+    linear-gradient(
+      180deg,
+      #eaf8f1 0%,
+      #e2f5eb 48%,
+      #d9f0e4 100%
+    );
+  background-attachment:fixed;
+}
+
+/* Student header */
+.student-page .brandbar{
+  background:rgba(255,255,255,.92);
+  border-bottom:1px solid #cfe7db;
+}
+
+/* Student hero */
+.student-page .hero{
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.97),
+      rgba(241,251,246,.96)
+    );
+
+  border:1px solid #cfe7db;
+}
+
+/* Student cards */
+.student-page .form-card,
+.student-page .exam-card,
+.student-page .panel,
+.student-page .q-card,
+.student-page .result-wrap{
+  background:rgba(255,255,255,.97);
+  border-color:#d4e9df;
+}
+
+/* Exam sidebar */
+.student-page .sidebar{
+  background:rgba(250,255,252,.96);
+  border-color:#cfe7db;
+}
+
+/* Footer / slogan */
+.student-footer{
+  max-width:900px;
+  margin:38px auto 18px;
+  padding:24px 20px;
+  text-align:center;
+  color:#355f50;
+}
+
+.student-footer-main{
+  margin:0 0 7px;
+  font-size:17px;
+  font-weight:900;
+  letter-spacing:.02em;
+}
+
+.student-footer-sub{
+  margin:0;
+  color:#6a877c;
+  font-size:13px;
+}
+
+.student-footer-line{
+  width:46px;
+  height:3px;
+  border-radius:10px;
+  background:#16865c;
+  margin:0 auto 14px;
+}
