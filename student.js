@@ -249,264 +249,132 @@ function loginPage() {
 
     ${brandBar(CBT_CONFIG.siteTitle)}
 
-    <main class="student-login-shell">
+    <main class="cbt-login-page">
 
-      <section class="student-login-hero">
+      <section class="cbt-login-stage">
+
+        <div class="cbt-login-title-area">
+          <div class="cbt-industry-label">飲食料品製造業</div>
+
+          <h1 class="cbt-main-title">模擬試験</h1>
+
+          <div class="cbt-title-sub">
+            <span></span>
+            TOKUTEI CBT
+            <span></span>
+          </div>
+        </div>
 
         <img
           src="assets/mascots/mascot-D.2.png"
-          class="student-login-mascot mascot-left"
+          class="cbt-mascot cbt-mascot-left"
           alt=""
         >
 
         <img
           src="assets/mascots/mascot-E.2.png"
-          class="student-login-mascot mascot-right"
+          class="cbt-mascot cbt-mascot-right"
           alt=""
         >
 
-        <div class="student-login-badge">
-          CBT 模擬試験
-        </div>
+        <section class="cbt-login-card">
 
-        <h1 class="student-login-title">
-          飲食料品製造業<br>
-          模擬試験
-        </h1>
+          <div class="cbt-mail-circle">✉</div>
 
-        <p class="student-login-lead">
-          本番に近い形式で、試験に向けた実践練習ができます。
-        </p>
+          <h2>受験者確認</h2>
 
-        <div class="student-login-features">
+          <p class="cbt-login-description">
+            登録されているメールアドレスを入力してください。
+          </p>
 
-          <span>⏱ 70分</span>
+          <div class="cbt-email-box">
+            <div class="cbt-email-icon">✉</div>
 
-          <span>📝 CBT形式</span>
+            <div class="cbt-email-content">
+              <label for="emailInput">メールアドレス</label>
 
-          <span>📊 分野別結果</span>
-
-        </div>
-
-      </section>
-
-
-      <section class="student-login-card">
-
-        <div class="login-main-character">
-
-          <img
-            src="assets/mascots/mascot-A.png"
-            alt=""
-          >
-
-        </div>
-
-
-        <div class="login-card-heading">
-
-          <div class="login-card-icon">
-            ✉
+              <input
+                id="emailInput"
+                type="email"
+                autocomplete="email"
+                placeholder="example@gmail.com"
+              >
+            </div>
           </div>
-
-          <div>
-
-            <h2>
-              受験者確認
-            </h2>
-
-            <p>
-              登録されているメールアドレスを入力してください。
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div class="login-input-area">
-
-          <label for="emailInput">
-            メールアドレス
-          </label>
-
-          <input
-            id="emailInput"
-            type="email"
-            autocomplete="email"
-            placeholder="example@gmail.com"
-          >
-
 
           <div
             id="emailMessage"
-            class="login-error"
+            class="cbt-login-message"
           ></div>
-
 
           <button
             id="emailLoginBtn"
-            class="student-login-button"
+            class="cbt-confirm-button"
             type="button"
             onclick="checkEmail()"
           >
-
-            確認して試験一覧へ
-
-            <span>
-              →
-            </span>
-
+            <span class="cbt-button-arrow">→</span>
+            <span>確認する</span>
           </button>
 
+          <div class="cbt-login-note">
+            <span class="cbt-info-icon">i</span>
+            <span>登録されているメールアドレスのみ、受験が可能です。</span>
+          </div>
+
+        </section>
+
+      </section>
+
+      <section class="cbt-login-features">
+
+        <div class="cbt-feature">
+          <div class="cbt-feature-icon">✓</div>
+          <div>
+            <strong>本番形式で練習</strong>
+            <p>実際の試験に近い形式で学習できます</p>
+          </div>
         </div>
 
+        <div class="cbt-feature-divider"></div>
 
-        <div class="login-security-note">
-          登録済みの受験者のみ利用できます。
+        <div class="cbt-feature">
+          <div class="cbt-feature-icon">◷</div>
+          <div>
+            <strong>時間管理</strong>
+            <p>制限時間内で集中して取り組めます</p>
+          </div>
+        </div>
+
+        <div class="cbt-feature-divider"></div>
+
+        <div class="cbt-feature">
+          <div class="cbt-feature-icon">▥</div>
+          <div>
+            <strong>実力チェック</strong>
+            <p>自分の理解度を確認できます</p>
+          </div>
         </div>
 
       </section>
 
-
-      <section class="student-login-message">
-
-        <div class="student-footer-line"></div>
-
-        <p class="student-footer-main">
-          本番を想定した模擬試験で、実践力を身につけよう。
-        </p>
-
-        <p class="student-footer-sub">
-          繰り返し練習して、自信を持って本番へ。
-        </p>
-
-      </section>
+      <footer class="cbt-login-footer">
+        © 2026 AIDEM Global
+        <span>|</span>
+        AITOKU CBT System
+      </footer>
 
     </main>
   `;
 
-
-  const input =
-    $("emailInput");
+  const input = $("emailInput");
 
   if (input) {
-
-    input.addEventListener(
-      "keydown",
-      e => {
-
-        if (
-          e.key === "Enter"
-        ) {
-
-          checkEmail();
-
-        }
-
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        checkEmail();
       }
-    );
-
-    input.focus();
-
-  }
-}
-
-      </div>
-
-
-      <div class="form-card login-card">
-
-
-        <div class="login-main-character">
-
-          <img
-            src="assets/mascots/mascot-A.png"
-            alt=""
-          >
-
-        </div>
-
-
-        <img
-          src="assets/mascots/mascot-D.2.png"
-          class="login-deco login-deco-left"
-          alt=""
-        >
-
-
-        <img
-          src="assets/mascots/mascot-E.2.png"
-          class="login-deco login-deco-right"
-          alt=""
-        >
-
-
-        <h2>
-          受験者確認
-        </h2>
-
-
-        <p class="login-guide">
-          登録されているメールアドレスを入力してください。
-        </p>
-
-
-        <div class="field">
-
-          <label>
-            メールアドレス
-          </label>
-
-          <input
-            id="emailInput"
-            type="email"
-            autocomplete="email"
-            placeholder="example@gmail.com"
-          >
-
-        </div>
-
-
-        <button
-          id="emailLoginBtn"
-          class="btn primary full"
-          onclick="checkEmail()"
-        >
-          確認する
-        </button>
-
-
-        <div
-          id="emailMessage"
-          class="note"
-          style="margin-top:12px"
-        ></div>
-
-
-      </div>
-
-    </div>
-  `;
-
-
-  const input =
-    $("emailInput");
-
-  if (input) {
-
-    input.addEventListener(
-      "keydown",
-      e => {
-
-        if (
-          e.key === "Enter"
-        ) {
-          checkEmail();
-        }
-
-      }
-    );
+    });
 
     input.focus();
   }

@@ -1,44 +1,23 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>飲食料品製造業 模擬試験</title>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>
-    飲食料品製造業 模擬試験
-  </title>
-
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="student-login.css">
 </head>
 
 <body class="student-page">
 
   <div id="app"></div>
-<footer class="student-footer">
 
-  <div class="student-footer-line"></div>
-
-  <p class="student-footer-main">
-    本番を想定した模擬試験で、実践力を身につけよう。
-  </p>
-
-  <p class="student-footer-sub">
-    繰り返し練習して、自信を持って本番へ。
-  </p>
-
-</footer>
   <button
     id="calcFab"
     class="calc-fab"
     title="電卓"
+    aria-label="電卓"
   >
     🧮
   </button>
@@ -47,15 +26,9 @@
     id="calculator"
     class="calculator hidden"
   >
-
     <div class="calc-head">
-
       <span>電卓</span>
-
-      <button id="calcClose">
-        ×
-      </button>
-
+      <button id="calcClose" type="button">×</button>
     </div>
 
     <input
@@ -66,7 +39,6 @@
     >
 
     <div class="calc-grid">
-
       <button data-calc="C">C</button>
       <button data-calc="DEL">⌫</button>
       <button data-calc="%">%</button>
@@ -87,18 +59,10 @@
       <button data-calc="3">3</button>
       <button data-calc="+">+</button>
 
-      <button
-        data-calc="0"
-        class="wide"
-      >
-        0
-      </button>
-
+      <button data-calc="0" class="wide">0</button>
       <button data-calc=".">.</button>
       <button data-calc="=">=</button>
-
     </div>
-
   </div>
 
   <script src="config.js"></script>
