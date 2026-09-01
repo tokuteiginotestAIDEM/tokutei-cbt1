@@ -1,513 +1,1507 @@
-
 /* =========================================================
-   AIDEM TOKUTEI CBT - STUDENT LOGIN DESIGN
-   Load this file AFTER style.css
+   AIDEM TOKUTEI CBT
+   STUDENT LOGIN PAGE
+   PC / TABLET / MOBILE
 ========================================================= */
 
-.student-page{
-  margin:0;
-  min-height:100vh;
-  background:#eef9f1;
+
+/* =========================================================
+   1. PAGE
+========================================================= */
+
+.student-page {
+  margin: 0;
+  min-height: 100vh;
+  background: #eef9f1;
+  overflow-x: hidden;
 }
 
-.student-page .brandbar{
-  min-height:84px;
-  box-sizing:border-box;
-  padding:14px clamp(20px,5vw,86px);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:24px;
-  background:#fff;
-  border-bottom:1px solid #edf1ef;
-  box-shadow:0 3px 14px rgba(27,73,54,.05);
-  position:relative;
-  z-index:20;
+
+/* =========================================================
+   2. HEADER
+========================================================= */
+
+.student-page .brandbar {
+  position: relative;
+  z-index: 50;
+
+  min-height: 82px;
+  box-sizing: border-box;
+
+  padding: 13px clamp(20px, 5vw, 80px);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e7efea;
+
+  box-shadow:
+    0 3px 14px
+    rgba(31, 82, 59, 0.05);
 }
 
-.student-page .brand-logos{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  min-width:0;
+
+.student-page .brand-logos {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  min-width: 0;
 }
 
-.student-page .brand-logo{
-  display:block;
-  object-fit:contain;
+
+.student-page .brand-logo {
+  display: block;
+
+  width: auto;
+
+  object-fit: contain;
 }
 
-.student-page .brand-logo.aidem{height:38px;width:auto;}
-.student-page .brand-logo.global{height:34px;width:auto;}
-.student-page .brand-logo.aitoku{height:35px;width:auto;}
 
-.student-page .brand-sep{
-  color:#9aaba4;
-  font-size:31px;
-  line-height:1;
-  font-weight:300;
+.student-page .brand-logo.aidem {
+  height: 37px;
 }
 
-.student-page .brand-title{
-  flex:none;
-  padding:10px 20px;
-  border:1.5px solid #2ba96b;
-  border-radius:999px;
-  color:#176443;
-  background:#fff;
-  font-size:14px;
-  font-weight:800;
-  white-space:nowrap;
+
+.student-page .brand-logo.global {
+  height: 33px;
 }
 
-.cbt-login-page{
-  min-height:calc(100vh - 84px);
-  color:#153f33;
-  font-family:Arial,"Noto Sans JP","Yu Gothic",Meiryo,sans-serif;
-  background:#fff;
+
+.student-page .brand-logo.aitoku {
+  height: 34px;
 }
 
-.cbt-login-stage{
-  position:relative;
-  overflow:hidden;
-  min-height:710px;
-  box-sizing:border-box;
-  padding:40px 20px 54px;
+
+.student-page .brand-sep {
+  color: #a6b5ae;
+
+  font-size: 29px;
+
+  line-height: 1;
+
+  font-weight: 300;
+}
+
+
+.student-page .brand-title {
+  flex: none;
+
+  padding: 9px 18px;
+
+  border:
+    1.5px solid
+    #29a866;
+
+  border-radius: 999px;
+
+  background: #ffffff;
+
+  color: #176443;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   3. LOGIN PAGE
+========================================================= */
+
+.cbt-login-page {
+  min-height:
+    calc(
+      100vh - 82px
+    );
+
+  color: #153f33;
+
+  font-family:
+    Arial,
+    "Noto Sans JP",
+    "Yu Gothic",
+    Meiryo,
+    sans-serif;
+
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   4. HERO
+========================================================= */
+
+.cbt-login-stage {
+  position: relative;
+
+  overflow: hidden;
+
+  min-height: 700px;
+
+  box-sizing: border-box;
+
+  padding:
+    38px
+    20px
+    60px;
+
   background:
-    radial-gradient(circle at 4% 18%, rgba(109,203,116,.12) 0 55px, transparent 56px),
-    radial-gradient(circle at 94% 8%, rgba(109,203,116,.10) 0 64px, transparent 65px),
-    radial-gradient(circle at 93% 45%, rgba(109,203,116,.10) 0 40px, transparent 41px),
-    radial-gradient(circle at 8% 48%, rgba(109,203,116,.08) 0 31px, transparent 32px),
-    linear-gradient(180deg,#f6fff8 0%,#effaf2 56%,#e8f7ec 100%);
+
+    radial-gradient(
+      circle at 5% 20%,
+      rgba(95, 194, 110, 0.11)
+      0 55px,
+      transparent 56px
+    ),
+
+    radial-gradient(
+      circle at 94% 12%,
+      rgba(95, 194, 110, 0.09)
+      0 70px,
+      transparent 71px
+    ),
+
+    radial-gradient(
+      circle at 93% 53%,
+      rgba(95, 194, 110, 0.08)
+      0 42px,
+      transparent 43px
+    ),
+
+    radial-gradient(
+      circle at 8% 55%,
+      rgba(95, 194, 110, 0.07)
+      0 34px,
+      transparent 35px
+    ),
+
+    linear-gradient(
+      180deg,
+      #f7fff9 0%,
+      #effaf2 55%,
+      #e8f7ec 100%
+    );
 }
+
+
+/* hills */
 
 .cbt-login-stage::before,
-.cbt-login-stage::after{
-  content:"";
-  position:absolute;
-  left:-5%;
-  width:110%;
-  border-radius:50% 50% 0 0 / 100% 100% 0 0;
-  pointer-events:none;
+.cbt-login-stage::after {
+  content: "";
+
+  position: absolute;
+
+  left: -5%;
+
+  width: 110%;
+
+  pointer-events: none;
+
+  border-radius:
+    50% 50% 0 0 /
+    100% 100% 0 0;
 }
 
-.cbt-login-stage::before{
-  height:185px;
-  bottom:-90px;
-  background:#d8f3df;
-  transform:rotate(2deg);
+
+.cbt-login-stage::before {
+  height: 190px;
+
+  bottom: -100px;
+
+  background: #d9f3df;
+
+  transform:
+    rotate(2deg);
 }
 
-.cbt-login-stage::after{
-  height:145px;
-  bottom:-82px;
-  background:#c8edcf;
-  transform:rotate(-2deg);
-  opacity:.9;
+
+.cbt-login-stage::after {
+  height: 145px;
+
+  bottom: -85px;
+
+  background: #c9edcf;
+
+  opacity: 0.92;
+
+  transform:
+    rotate(-2deg);
 }
 
-.cbt-login-title-area{
-  position:relative;
-  z-index:5;
-  text-align:center;
-  margin:0 auto 22px;
+
+/* =========================================================
+   5. TITLE
+========================================================= */
+
+.cbt-login-title-area {
+  position: relative;
+
+  z-index: 10;
+
+  margin:
+    0 auto
+    20px;
+
+  text-align: center;
 }
 
-.cbt-industry-label{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:270px;
-  height:44px;
-  padding:0 28px;
-  box-sizing:border-box;
-  border-radius:999px;
-  background:linear-gradient(135deg,#14a861,#28bd6e);
-  color:#fff;
-  font-size:20px;
-  font-weight:900;
-  letter-spacing:.12em;
-  box-shadow:0 8px 18px rgba(25,155,91,.15);
+
+.cbt-industry-label {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-width: 270px;
+
+  min-height: 43px;
+
+  box-sizing: border-box;
+
+  padding:
+    8px
+    28px;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #13a660,
+      #29bb6d
+    );
+
+  box-shadow:
+    0 8px 20px
+    rgba(
+      22,
+      158,
+      91,
+      0.15
+    );
+
+  color: #ffffff;
+
+  font-size: 19px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.10em;
 }
 
-.cbt-main-title{
-  margin:10px 0 4px;
-  color:#0d4e6f;
-  font-size:55px;
-  line-height:1.12;
-  font-weight:950;
-  letter-spacing:.16em;
-  text-shadow:0 2px 0 #fff;
+
+.cbt-main-title {
+  margin:
+    10px
+    0
+    4px;
+
+  color: #105371;
+
+  font-size:
+    clamp(
+      42px,
+      4vw,
+      56px
+    );
+
+  line-height: 1.12;
+
+  font-weight: 900;
+
+  letter-spacing: 0.13em;
+
+  text-shadow:
+    0 2px 0
+    #ffffff;
 }
 
-.cbt-title-sub{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:15px;
-  color:#145875;
-  font-size:18px;
-  font-weight:800;
-  letter-spacing:.16em;
+
+.cbt-title-sub {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 14px;
+
+  color: #145875;
+
+  font-size: 17px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.16em;
 }
 
-.cbt-title-sub span{
-  width:70px;
-  height:2px;
-  border-radius:20px;
-  background:#1b627f;
+
+.cbt-title-sub span {
+  width: 68px;
+
+  height: 2px;
+
+  border-radius: 20px;
+
+  background: #1b627f;
 }
 
-.cbt-login-card{
-  position:relative;
-  z-index:8;
-  width:min(540px,calc(100% - 28px));
-  box-sizing:border-box;
-  margin:16px auto 0;
-  padding:30px 38px 24px;
-  border:1px solid #e0ebe5;
-  border-radius:22px;
-  background:rgba(255,255,255,.98);
-  box-shadow:0 18px 50px rgba(25,93,62,.14);
-  text-align:center;
+
+/* =========================================================
+   6. LOGIN CARD
+========================================================= */
+
+.cbt-login-card {
+  position: relative;
+
+  z-index: 15;
+
+  width:
+    min(
+      540px,
+      calc(100% - 28px)
+    );
+
+  box-sizing: border-box;
+
+  margin:
+    15px auto
+    0;
+
+  padding:
+    29px
+    38px
+    24px;
+
+  border:
+    1px solid
+    #e0ebe5;
+
+  border-radius: 22px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.98
+    );
+
+  box-shadow:
+    0 18px 50px
+    rgba(
+      25,
+      93,
+      62,
+      0.14
+    );
+
+  text-align: center;
 }
 
-.cbt-mail-circle{
-  width:70px;
-  height:70px;
-  margin:0 auto 12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:50%;
-  background:#e5f7e9;
-  color:#15995a;
-  font-size:34px;
-  font-weight:900;
+
+/* mail icon */
+
+.cbt-mail-circle {
+  width: 68px;
+
+  height: 68px;
+
+  margin:
+    0 auto
+    12px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e4f7e9;
+
+  color: #15995a;
+
+  font-size: 31px;
+
+  font-weight: 900;
 }
 
-.cbt-login-card h2{
-  margin:0 0 10px;
-  color:#0c4c72;
-  font-size:34px;
-  line-height:1.25;
-  font-weight:950;
-  letter-spacing:.10em;
+
+.cbt-login-card h2 {
+  margin:
+    0
+    0
+    9px;
+
+  color: #0c4c72;
+
+  font-size: 32px;
+
+  line-height: 1.25;
+
+  font-weight: 900;
+
+  letter-spacing: 0.08em;
 }
 
-.cbt-login-description{
-  margin:0 0 20px;
-  color:#274c63;
-  font-size:14px;
-  font-weight:700;
+
+.cbt-login-description {
+  margin:
+    0
+    0
+    20px;
+
+  color: #435f70;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  line-height: 1.6;
 }
 
-.cbt-email-box{
-  min-height:78px;
-  box-sizing:border-box;
-  padding:10px 14px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  border:1.5px solid #bdcbd1;
-  border-radius:15px;
-  background:#fff;
-  text-align:left;
-  transition:.2s;
+
+/* =========================================================
+   7. EMAIL INPUT
+========================================================= */
+
+.cbt-email-box {
+  min-height: 76px;
+
+  box-sizing: border-box;
+
+  padding:
+    10px
+    14px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  border:
+    1.5px solid
+    #bdcbd1;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  text-align: left;
+
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
-.cbt-email-box:focus-within{
-  border-color:#27a967;
-  box-shadow:0 0 0 4px rgba(39,169,103,.10);
+
+.cbt-email-box:focus-within {
+  border-color: #27a967;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(
+      39,
+      169,
+      103,
+      0.10
+    );
 }
 
-.cbt-email-icon{
-  width:34px;
-  flex:none;
-  text-align:center;
-  color:#14547a;
-  font-size:24px;
+
+.cbt-email-icon {
+  width: 34px;
+
+  flex: none;
+
+  text-align: center;
+
+  color: #14547a;
+
+  font-size: 23px;
 }
 
-.cbt-email-content{
-  flex:1;
-  min-width:0;
+
+.cbt-email-content {
+  flex: 1;
+
+  min-width: 0;
 }
 
-.cbt-email-content label{
-  display:block;
-  margin-bottom:3px;
-  color:#8796a5;
-  font-size:12px;
-  font-weight:800;
+
+.cbt-email-content label {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #8495a2;
+
+  font-size: 12px;
+
+  font-weight: 800;
 }
 
-.cbt-email-content input{
-  width:100%;
-  box-sizing:border-box;
-  padding:0;
-  border:0;
-  outline:0;
-  background:transparent;
-  color:#243b4a;
-  font-size:17px;
+
+.cbt-email-content input {
+  display: block;
+
+  width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  padding: 0;
+
+  border: 0;
+
+  outline: none;
+
+  background: transparent;
+
+  color: #263f4e;
+
+  font-size: 16px;
+
+  line-height: 1.5;
 }
 
-.cbt-email-content input::placeholder{
-  color:#a7b1bd;
+
+.cbt-email-content input::placeholder {
+  color: #abb5bd;
 }
 
-.cbt-login-message{
-  min-height:20px;
-  margin:7px 0 0;
-  text-align:left;
-  color:#c33c3c;
-  font-size:12px;
-  font-weight:700;
+
+/* =========================================================
+   8. MESSAGE
+========================================================= */
+
+.cbt-login-message {
+  min-height: 20px;
+
+  margin-top: 7px;
+
+  text-align: left;
+
+  color: #c33c3c;
+
+  font-size: 12px;
+
+  font-weight: 700;
 }
 
-.cbt-confirm-button{
-  width:100%;
-  min-height:62px;
-  margin-top:7px;
-  border:0;
-  border-radius:999px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:13px;
-  background:linear-gradient(135deg,#18ad69,#31bb57);
-  color:#fff;
-  font-size:20px;
-  font-weight:900;
-  cursor:pointer;
-  box-shadow:0 12px 26px rgba(30,170,96,.24);
-  transition:.18s ease;
+
+/* =========================================================
+   9. CONFIRM BUTTON
+========================================================= */
+
+.cbt-confirm-button {
+  width: 100%;
+
+  min-height: 60px;
+
+  box-sizing: border-box;
+
+  margin-top: 7px;
+
+  border: 0;
+
+  border-radius: 999px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #18ad69,
+      #31bb57
+    );
+
+  box-shadow:
+    0 12px 26px
+    rgba(
+      30,
+      170,
+      96,
+      0.24
+    );
+
+  color: #ffffff;
+
+  font-size: 19px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s,
+    opacity 0.18s;
 }
 
-.cbt-confirm-button:hover{
-  transform:translateY(-1px);
-  box-shadow:0 15px 30px rgba(30,170,96,.29);
+
+.cbt-confirm-button:hover {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 15px 30px
+    rgba(
+      30,
+      170,
+      96,
+      0.29
+    );
 }
 
-.cbt-confirm-button:disabled{
-  opacity:.62;
-  cursor:wait;
-  transform:none;
+
+.cbt-confirm-button:active {
+  transform:
+    translateY(0);
 }
 
-.cbt-button-arrow{
-  font-size:29px;
-  line-height:1;
+
+.cbt-confirm-button:disabled {
+  opacity: 0.62;
+
+  cursor: wait;
+
+  transform: none;
 }
 
-.cbt-login-note{
-  margin-top:17px;
-  min-height:56px;
-  box-sizing:border-box;
-  padding:11px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  border-radius:12px;
-  background:#edf8ef;
-  color:#205d46;
-  font-size:12px;
-  font-weight:700;
+
+.cbt-button-arrow {
+  font-size: 27px;
+
+  line-height: 1;
 }
 
-.cbt-info-icon{
-  width:22px;
-  height:22px;
-  flex:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border:2px solid #1c8c59;
-  border-radius:50%;
-  color:#1c8c59;
-  font-size:13px;
-  font-weight:900;
+
+/* =========================================================
+   10. LOGIN NOTE
+========================================================= */
+
+.cbt-login-note {
+  min-height: 54px;
+
+  box-sizing: border-box;
+
+  margin-top: 16px;
+
+  padding:
+    10px
+    15px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  border-radius: 12px;
+
+  background: #edf8ef;
+
+  color: #205d46;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  line-height: 1.5;
 }
 
-.cbt-mascot{
-  position:absolute;
-  z-index:6;
-  object-fit:contain;
-  pointer-events:none;
-  user-select:none;
+
+.cbt-info-icon {
+  width: 21px;
+
+  height: 21px;
+
+  flex: none;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  border:
+    2px solid
+    #1c8c59;
+
+  border-radius: 50%;
+
+  color: #1c8c59;
+
+  font-size: 12px;
+
+  font-weight: 900;
 }
 
-.cbt-mascot-left{
-  width:330px;
-  max-height:430px;
-  left:max(18px,calc(50% - 575px));
-  top:145px;
-  transform:rotate(-4deg);
+
+/* =========================================================
+   11. MASCOTS
+========================================================= */
+
+.cbt-mascot {
+  position: absolute;
+
+  z-index: 8;
+
+  object-fit: contain;
+
+  pointer-events: none;
+
+  user-select: none;
 }
 
-.cbt-mascot-right{
-  width:270px;
-  max-height:310px;
-  right:max(16px,calc(50% - 545px));
-  bottom:18px;
-  transform:rotate(7deg);
+
+.cbt-mascot-left {
+  width:
+    clamp(
+      230px,
+      24vw,
+      330px
+    );
+
+  max-height: 420px;
+
+  left:
+    max(
+      15px,
+      calc(50% - 580px)
+    );
+
+  top: 150px;
+
+  transform:
+    rotate(-4deg);
 }
 
-.cbt-login-features{
-  min-height:118px;
-  box-sizing:border-box;
-  padding:22px max(20px,calc((100% - 1130px)/2));
-  display:grid;
-  grid-template-columns:1fr auto 1fr auto 1fr;
-  align-items:center;
-  gap:24px;
-  background:#fff;
+
+.cbt-mascot-right {
+  width:
+    clamp(
+      200px,
+      20vw,
+      270px
+    );
+
+  max-height: 310px;
+
+  right:
+    max(
+      15px,
+      calc(50% - 550px)
+    );
+
+  bottom: 18px;
+
+  transform:
+    rotate(6deg);
 }
 
-.cbt-feature{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:14px;
-  color:#244e67;
+
+/* =========================================================
+   12. FEATURES
+========================================================= */
+
+.cbt-login-features {
+  min-height: 116px;
+
+  box-sizing: border-box;
+
+  padding:
+    22px
+    max(
+      20px,
+      calc(
+        (100% - 1130px) / 2
+      )
+    );
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto
+    1fr
+    auto
+    1fr;
+
+  align-items: center;
+
+  gap: 22px;
+
+  background: #ffffff;
 }
 
-.cbt-feature-icon{
-  width:62px;
-  height:62px;
-  flex:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:50%;
-  background:#def4df;
-  color:#1d9e59;
-  font-size:31px;
-  font-weight:900;
+
+.cbt-feature {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 13px;
+
+  min-width: 0;
+
+  color: #244e67;
 }
 
-.cbt-feature strong{
-  display:block;
-  margin-bottom:4px;
-  color:#214c66;
-  font-size:15px;
+
+.cbt-feature-icon {
+  width: 60px;
+
+  height: 60px;
+
+  flex: none;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #def4df;
+
+  color: #1d9e59;
+
+  font-size: 28px;
+
+  font-weight: 900;
 }
 
-.cbt-feature p{
-  margin:0;
-  color:#7c8d98;
-  font-size:12px;
-  line-height:1.5;
+
+.cbt-feature strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #214c66;
+
+  font-size: 15px;
 }
 
-.cbt-feature-divider{
-  width:1px;
-  height:58px;
-  background:#e4e9e7;
+
+.cbt-feature p {
+  margin: 0;
+
+  color: #7c8d98;
+
+  font-size: 12px;
+
+  line-height: 1.5;
 }
 
-.cbt-login-footer{
-  padding:8px 20px 25px;
-  text-align:center;
-  color:#9aa6ae;
-  background:#fff;
-  font-size:12px;
+
+.cbt-feature-divider {
+  width: 1px;
+
+  height: 56px;
+
+  background: #e4e9e7;
 }
 
-.cbt-login-footer span{
-  display:inline-block;
-  margin:0 8px;
-  color:#c2c9cd;
+
+/* =========================================================
+   13. FOOTER
+========================================================= */
+
+.cbt-login-footer {
+  padding:
+    8px
+    20px
+    24px;
+
+  text-align: center;
+
+  background: #ffffff;
+
+  color: #9aa6ae;
+
+  font-size: 12px;
 }
 
-@media (max-width:980px){
-  .student-page .brand-title{display:none;}
-  .cbt-mascot-left{width:250px;left:-35px;opacity:.9;}
-  .cbt-mascot-right{width:220px;right:-30px;opacity:.9;}
-  .cbt-login-card{width:min(520px,calc(100% - 38px));}
+
+.cbt-login-footer span {
+  display: inline-block;
+
+  margin:
+    0
+    8px;
+
+  color: #c2c9cd;
 }
 
-@media (max-width:760px){
-  .student-page .brandbar{
-    min-height:68px;
-    padding:12px 14px;
+
+/* =========================================================
+   14. TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+  .student-page .brandbar {
+    padding:
+      13px
+      25px;
   }
 
-  .student-page .brand-logos{gap:8px;}
-  .student-page .brand-logo.aidem{height:27px;}
-  .student-page .brand-logo.global{height:24px;}
-  .student-page .brand-logo.aitoku{height:25px;}
-  .student-page .brand-sep{font-size:20px;}
 
-  .cbt-login-page{min-height:calc(100vh - 68px);}
-  .cbt-login-stage{
-    min-height:650px;
-    padding:28px 10px 65px;
+  .student-page .brand-title {
+    font-size: 12px;
+
+    padding:
+      8px
+      13px;
   }
 
-  .cbt-industry-label{
-    min-width:210px;
-    height:37px;
-    padding:0 18px;
-    font-size:15px;
+
+  .cbt-mascot-left {
+    width: 235px;
+
+    left: -45px;
+
+    opacity: 0.88;
   }
 
-  .cbt-main-title{
-    font-size:40px;
-    letter-spacing:.10em;
+
+  .cbt-mascot-right {
+    width: 210px;
+
+    right: -40px;
+
+    opacity: 0.88;
   }
 
-  .cbt-title-sub{
-    gap:9px;
-    font-size:14px;
+
+  .cbt-login-card {
+    width:
+      min(
+        510px,
+        calc(100% - 40px)
+      );
   }
 
-  .cbt-title-sub span{width:44px;}
-
-  .cbt-login-card{
-    width:calc(100% - 24px);
-    padding:25px 20px 21px;
-  }
-
-  .cbt-login-card h2{font-size:27px;}
-  .cbt-mail-circle{width:58px;height:58px;font-size:27px;}
-
-  .cbt-mascot-left{
-    width:150px;
-    top:178px;
-    left:-42px;
-    opacity:.50;
-  }
-
-  .cbt-mascot-right{
-    width:145px;
-    right:-44px;
-    bottom:5px;
-    opacity:.50;
-  }
-
-  .cbt-login-features{
-    padding:20px 22px;
-    grid-template-columns:1fr;
-    gap:15px;
-  }
-
-  .cbt-feature{
-    justify-content:flex-start;
-    max-width:360px;
-    width:100%;
-    margin:auto;
-  }
-
-  .cbt-feature-divider{display:none;}
-  .cbt-feature-icon{width:52px;height:52px;font-size:25px;}
 }
 
-@media (max-width:430px){
-  .student-page .brand-logo.global{max-width:112px;}
-  .student-page .brand-logo.aitoku{max-width:88px;}
-  .cbt-login-description{font-size:13px;}
-  .cbt-confirm-button{min-height:56px;font-size:18px;}
+
+/* =========================================================
+   15. MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  /* ---------- Header ---------- */
+
+  .student-page .brandbar {
+    min-height: 62px;
+
+    padding:
+      9px
+      11px;
+
+    gap: 8px;
+
+    overflow: hidden;
+  }
+
+
+  .student-page .brand-logos {
+    width: 100%;
+
+    justify-content: center;
+
+    gap: 6px;
+  }
+
+
+  .student-page .brand-logo.aidem {
+    height: 23px;
+  }
+
+
+  .student-page .brand-logo.global {
+    height: 21px;
+
+    max-width: 120px;
+  }
+
+
+  .student-page .brand-logo.aitoku {
+    height: 22px;
+
+    max-width: 88px;
+  }
+
+
+  .student-page .brand-sep {
+    font-size: 18px;
+  }
+
+
+  /*
+     Mobile không cần badge bên phải
+     vì tên ngành đã xuất hiện ở hero.
+  */
+
+  .student-page .brand-title {
+    display: none;
+  }
+
+
+  /* ---------- Page ---------- */
+
+  .cbt-login-page {
+    min-height:
+      calc(
+        100vh - 62px
+      );
+  }
+
+
+  /* ---------- Hero ---------- */
+
+  .cbt-login-stage {
+    min-height: 610px;
+
+    padding:
+      25px
+      8px
+      62px;
+  }
+
+
+  /* ---------- Industry ---------- */
+
+  .cbt-industry-label {
+    min-width: 0;
+
+    min-height: 35px;
+
+    padding:
+      7px
+      19px;
+
+    font-size: 14px;
+
+    letter-spacing: 0.07em;
+  }
+
+
+  /* ---------- Main title ---------- */
+
+  .cbt-main-title {
+    margin-top: 8px;
+
+    font-size: 38px;
+
+    letter-spacing: 0.08em;
+  }
+
+
+  .cbt-title-sub {
+    gap: 8px;
+
+    font-size: 13px;
+
+    letter-spacing: 0.12em;
+  }
+
+
+  .cbt-title-sub span {
+    width: 40px;
+  }
+
+
+  /* ---------- Card ---------- */
+
+  .cbt-login-card {
+    width:
+      calc(
+        100% - 22px
+      );
+
+    max-width: 430px;
+
+    margin-top: 15px;
+
+    padding:
+      23px
+      18px
+      20px;
+
+    border-radius: 20px;
+
+    box-shadow:
+      0 14px 36px
+      rgba(
+        25,
+        93,
+        62,
+        0.13
+      );
+  }
+
+
+  .cbt-mail-circle {
+    width: 55px;
+
+    height: 55px;
+
+    margin-bottom: 9px;
+
+    font-size: 25px;
+  }
+
+
+  .cbt-login-card h2 {
+    margin-bottom: 7px;
+
+    font-size: 25px;
+
+    letter-spacing: 0.06em;
+  }
+
+
+  .cbt-login-description {
+    margin-bottom: 15px;
+
+    font-size: 12px;
+
+    line-height: 1.55;
+  }
+
+
+  /* ---------- Input ---------- */
+
+  .cbt-email-box {
+    min-height: 68px;
+
+    padding:
+      9px
+      11px;
+
+    gap: 9px;
+
+    border-radius: 13px;
+  }
+
+
+  .cbt-email-icon {
+    width: 28px;
+
+    font-size: 20px;
+  }
+
+
+  .cbt-email-content label {
+    font-size: 11px;
+  }
+
+
+  /*
+     16px rất quan trọng trên iPhone.
+     Tránh Safari tự zoom khi chạm input.
+  */
+
+  .cbt-email-content input {
+    font-size: 16px;
+  }
+
+
+  /* ---------- Button ---------- */
+
+  .cbt-confirm-button {
+    min-height: 55px;
+
+    margin-top: 5px;
+
+    font-size: 17px;
+  }
+
+
+  .cbt-button-arrow {
+    font-size: 24px;
+  }
+
+
+  /* ---------- Note ---------- */
+
+  .cbt-login-note {
+    min-height: 50px;
+
+    margin-top: 14px;
+
+    padding:
+      9px
+      11px;
+
+    font-size: 11px;
+  }
+
+
+  /* ---------- Mascots ---------- */
+
+  /*
+     Mobile: mascot chỉ làm trang trí,
+     không được che login card.
+  */
+
+  .cbt-mascot-left {
+    width: 135px;
+
+    max-height: 175px;
+
+    left: -43px;
+
+    top: 178px;
+
+    opacity: 0.38;
+
+    z-index: 4;
+  }
+
+
+  .cbt-mascot-right {
+    width: 130px;
+
+    max-height: 160px;
+
+    right: -42px;
+
+    bottom: 10px;
+
+    opacity: 0.38;
+
+    z-index: 4;
+  }
+
+
+  /* ---------- Features ---------- */
+
+  .cbt-login-features {
+    min-height: 0;
+
+    padding:
+      24px
+      25px;
+
+    grid-template-columns: 1fr;
+
+    gap: 17px;
+  }
+
+
+  .cbt-feature {
+    width: 100%;
+
+    max-width: 360px;
+
+    margin:
+      0 auto;
+
+    justify-content: flex-start;
+  }
+
+
+  .cbt-feature-icon {
+    width: 50px;
+
+    height: 50px;
+
+    font-size: 23px;
+  }
+
+
+  .cbt-feature strong {
+    font-size: 14px;
+  }
+
+
+  .cbt-feature p {
+    font-size: 11px;
+  }
+
+
+  .cbt-feature-divider {
+    display: none;
+  }
+
+
+  /* ---------- Footer ---------- */
+
+  .cbt-login-footer {
+    padding:
+      5px
+      15px
+      20px;
+
+    font-size: 10px;
+  }
+
+}
+
+
+/* =========================================================
+   16. SMALL PHONE
+   iPhone SE / small Android
+========================================================= */
+
+@media (max-width: 390px) {
+
+  .student-page .brandbar {
+    padding:
+      8px
+      6px;
+  }
+
+
+  .student-page .brand-logos {
+    gap: 4px;
+  }
+
+
+  .student-page .brand-logo.aidem {
+    height: 20px;
+  }
+
+
+  .student-page .brand-logo.global {
+    height: 18px;
+
+    max-width: 105px;
+  }
+
+
+  .student-page .brand-logo.aitoku {
+    height: 19px;
+
+    max-width: 75px;
+  }
+
+
+  .student-page .brand-sep {
+    font-size: 15px;
+  }
+
+
+  .cbt-login-stage {
+    padding-top: 20px;
+  }
+
+
+  .cbt-industry-label {
+    font-size: 12px;
+  }
+
+
+  .cbt-main-title {
+    font-size: 33px;
+  }
+
+
+  .cbt-title-sub {
+    font-size: 11px;
+  }
+
+
+  .cbt-title-sub span {
+    width: 31px;
+  }
+
+
+  .cbt-login-card {
+    width:
+      calc(
+        100% - 18px
+      );
+
+    padding:
+      21px
+      14px
+      18px;
+  }
+
+
+  .cbt-login-card h2 {
+    font-size: 23px;
+  }
+
+
+  .cbt-login-description {
+    font-size: 11px;
+  }
+
+
+  .cbt-email-box {
+    padding:
+      8px
+      10px;
+  }
+
+
+  .cbt-login-note {
+    font-size: 10px;
+  }
+
+
+  .cbt-mascot-left,
+  .cbt-mascot-right {
+    opacity: 0.25;
+  }
+
+}
+
+
+/* =========================================================
+   17. VERY LARGE SCREEN
+========================================================= */
+
+@media (min-width: 1500px) {
+
+  .cbt-login-stage {
+    min-height: 730px;
+  }
+
+
+  .cbt-mascot-left {
+    width: 350px;
+  }
+
+
+  .cbt-mascot-right {
+    width: 290px;
+  }
+
 }
