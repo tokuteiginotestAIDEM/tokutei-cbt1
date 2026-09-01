@@ -28,18 +28,54 @@ let state = {
 // ======================================================
 
 const MASCOTS = [
-  "assets/character-01.png",
-  "assets/character-02.png",
-  "assets/character-03.png",
-  "assets/character-04.png",
-  "assets/character-05.png",
-  "assets/character-06.png",
-  "assets/character-07.png",
-  "assets/character-08.png"
+  "assets/mascots/mascot-A.png",
+  "assets/mascots/mascot-A.1.png",
+  "assets/mascots/mascot-A.2.png",
+
+  "assets/mascots/mascot-B.png",
+  "assets/mascots/mascot-B.2.png",
+
+  "assets/mascots/mascot-C.png",
+  "assets/mascots/mascot-C.1.png",
+
+  "assets/mascots/mascot-D.png",
+  "assets/mascots/mascot-D.1.png",
+  "assets/mascots/mascot-D.2.png",
+
+  "assets/mascots/mascot-E.png",
+  "assets/mascots/mascot-E.1.png",
+  "assets/mascots/mascot-E.2.png"
 ];
 
 function mascotFor(i) {
-  return MASCOTS[i % MASCOTS.length];
+  return MASCOTS[
+    Math.abs(Number(i) || 0) % MASCOTS.length
+  ];
+}
+
+/*
+ * Mỗi đề được gán một mascot dựa trên exam ID.
+ * Vì vậy cùng một đề sẽ giữ cùng mascot ở:
+ * danh sách đề → màn hình thi → kết quả.
+ */
+function mascotForExam(examId) {
+
+  const text = String(examId || "");
+
+  let hash = 0;
+
+  for (let i = 0; i < text.length; i++) {
+
+    hash =
+      ((hash << 5) - hash)
+      + text.charCodeAt(i);
+
+    hash |= 0;
+  }
+
+  return MASCOTS[
+    Math.abs(hash) % MASCOTS.length
+  ];
 }
 
 
@@ -54,7 +90,7 @@ function brandBar(title = "", timer = false) {
       <div class="brand-logos">
 
         <img
-          src="assets/aidem-logo.png"
+        src="assets/logos/aidem-logo.png"
           class="brand-logo aidem"
           alt="AIDEM"
         >
@@ -62,7 +98,7 @@ function brandBar(title = "", timer = false) {
         <span class="brand-sep">›</span>
 
         <img
-          src="assets/aidem-global-logo.png"
+       src="assets/logos/aidem-global-logo.png"
           class="brand-logo global"
           alt="アイデムグローバル"
         >
@@ -70,7 +106,7 @@ function brandBar(title = "", timer = false) {
         <span class="brand-sep">›</span>
 
         <img
-          src="assets/aitoku-logo.png"
+          src="assets/logos/aitoku-logo.png"
           class="brand-logo aitoku"
           alt="アイトク"
         >
@@ -234,7 +270,7 @@ function loginPage() {
         <div class="login-main-character">
 
           <img
-            src="assets/character-01.png"
+            src="assets/mascots/mascot-A.png"
             alt=""
           >
 
@@ -242,14 +278,14 @@ function loginPage() {
 
 
         <img
-          src="assets/character-06.png"
+          src="assets/mascots/mascot-D.2.png"
           class="login-deco login-deco-left"
           alt=""
         >
 
 
         <img
-          src="assets/character-07.png"
+          src="assets/mascots/mascot-E.2.png"
           class="login-deco login-deco-right"
           alt=""
         >
@@ -671,7 +707,7 @@ async function home() {
             <div class="exam-card-visual">
 
               <img
-                src="${mascotFor(i)}"
+                src="${mascotForExam(e.id)}"
                 alt=""
                 class="exam-mascot"
               >
@@ -1103,15 +1139,13 @@ function renderExam() {
         </div>
 
 
-        <div class="sidebar-mascot">
+       <div class="sidebar-mascot">
 
-          <img
-            src="assets/character-07.png"
-            alt=""
+        <img
+          src="${mascotForExam(state.exam.id)}"
+          alt=""
           >
-
-        </div>
-
+      </div>
 
         <button
           class="submit"
@@ -1767,14 +1801,14 @@ function renderResult(
     <div class="result-wrap">
 
 
-      <div class="result-mascot">
+     <div class="result-mascot">
 
-        <img
-          src="assets/character-06.png"
+       <img
+          src="${mascotForExam(state.exam.id)}"
           alt=""
-        >
+      >
 
-      </div>
+    </div>
 
 
       <h2 style="text-align:center">
