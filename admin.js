@@ -1,42 +1,2496 @@
-const app=document.getElementById("adminApp");
-let ADMIN_KEY=sessionStorage.getItem("cbt_admin_key")||"";
-let currentTab="results",resultsCache=[],examsCache=[];
-const $=id=>document.getElementById(id);
+// ======================================================
+// AIDEM TOKUTEI CBT - ADMIN
+// ======================================================
 
-function adminBrand(title="模擬試験 管理画面"){
-  return `<div class="brandbar admin-brandbar">
-    <div class="brand-logos">
-      <img src="assets/aidem-logo.png" class="brand-logo aidem" alt="AIDEM">
-      <span class="brand-sep">›</span>
-      <img src="assets/aidem-global-logo.png" class="brand-logo global" alt="アイデムグローバル">
-      <span class="brand-sep">›</span>
-      <div class="team-brand"><img src="assets/aitoku-logo.png" class="brand-logo aitoku" alt="アイトク"></div>
-    </div>
-    <div class="brand-title">${esc(title)}</div>
-  </div>`;
+const app = document.getElementById("adminApp");
+const $ = id => document.getElementById(id);
+
+let ADMIN_KEY =
+  sessionStorage.getItem("cbt_admin_key") || "";
+
+let currentTab = "results";
+
+let resultsCache = [];
+let examsCache = [];
+
+
+// ======================================================
+// ESCAPE
+// ======================================================
+
+function esc(s) {
+
+  return String(s ?? "").replace(
+    /[&<>"']/g,
+    m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m])
+  );
+
 }
 
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function jsonp(params){return new Promise((resolve,reject)=>{const cb="cb_"+Date.now()+"_"+Math.random().toString(36).slice(2),script=document.createElement("script");const timer=setTimeout(()=>{cleanup();reject(new Error("Timeout"))},15000);function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}window[cb]=d=>{cleanup();resolve(d)};script.src=模擬試験_CONFIG.apiUrl+"?"+new URLSearchParams({...params,callback:cb}).toString();script.onerror=()=>{cleanup();reject(new Error("Network"))};document.body.appendChild(script)})}
-async function postAdmin(payload){payload.adminKey=ADMIN_KEY;await fetch(模擬試験_CONFIG.apiUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});await new Promise(r=>setTimeout(r,1000))}
-function login(){app.innerHTML=`${adminBrand("管理者ログイン")}<div class="form-card"><h2>管理者ログイン</h2><div class="field"><label>管理パスワード</label><input id="keyInput" type="password"></div><button class="btn primary full" onclick="doLogin()">ログイン</button><div class="note">パスワードはGoogle Apps ScriptのScript Propertiesで設定します。</div></div>`}
-window.doLogin=async function(){const k=$("keyInput").value.trim();if(!k)return;try{const d=await jsonp({action:"adminPing",key:k});if(!d.ok)throw 0;ADMIN_KEY=k;sessionStorage.setItem("cbt_admin_key",k);dashboard()}catch{alert("パスワードが正しくありません。")}}
-async function dashboard(){app.innerHTML=`${adminBrand("飲食料品製造業 模擬試験 管理画面")}<div class="admin-logout"><button class="btn secondary" onclick="logout()">ログアウト</button></div><div class="page"><div class="admin-tabs"><button id="tabResults" class="btn secondary" onclick="showTab('results')">受験結果</button><button id="tabExams" class="btn secondary" onclick="showTab('exams')">試験管理</button><button id="tabUpload" class="btn secondary" onclick="showTab('upload')">新しい試験を追加</button></div><div id="content" class="panel">読み込み中...</div></div>`;showTab(currentTab)}
-window.logout=function(){sessionStorage.removeItem("cbt_admin_key");ADMIN_KEY="";login()}
-window.showTab=async function(tab){currentTab=tab;["Results","Exams","Upload"].forEach(x=>{const el=$("tab"+x);if(el)el.classList.remove("active")});const cap=tab.charAt(0).toUpperCase()+tab.slice(1);if($("tab"+cap))$("tab"+cap).classList.add("active");if(tab==="results")loadResults();if(tab==="exams")loadExams();if(tab==="upload")uploadForm()}
-async function loadResults(){const c=$("content");c.innerHTML="結果を読み込んでいます...";try{const d=await jsonp({action:"adminResults",key:ADMIN_KEY});if(!d.ok)throw 0;resultsCache=d.results;renderResults()}catch{c.innerHTML="読み込みに失敗しました。"}}
-function renderResults(){const c=$("content");c.innerHTML=`<h2>受験結果</h2><div class="toolbar"><input id="fCompany" placeholder="企業名" oninput="filterResults()"><input id="fName" placeholder="氏名" oninput="filterResults()"><select id="fPass" onchange="filterResults()"><option value="">すべて</option><option value="true">合格</option><option value="false">不合格</option></select><button class="btn primary" onclick="exportResults()">CSV出力</button></div><div id="resultTable"></div>`;filterResults()}
-window.filterResults=function(){const fc=($("fCompany")?.value||"").toLowerCase(),fn=($("fName")?.value||"").toLowerCase(),fp=$("fPass")?.value||"";const rows=resultsCache.filter(r=>(r.company||"").toLowerCase().includes(fc)&&(r.studentName||"").toLowerCase().includes(fn)&&(fp===""||String(r.passed)===fp));$("resultTable").innerHTML=`<div class="table-wrap"><table class="data-table"><thead><tr><th>日時</th><th>企業名</th><th>氏名</th><th>試験</th><th>得点</th><th>判定</th><th>分野別</th><th>重点復習</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.timestamp)}</td><td>${esc(r.company)}</td><td>${esc(r.studentName)}</td><td>${esc(r.examTitle)}</td><td><b>${r.correct}/${r.total} (${r.percent}%)</b></td><td class="${r.passed?"good":"weak"}">${r.passed?"合格":"不合格"}</td><td class="cat-mini">${(r.categories||[]).map(c=>`${esc(c.category)}: ${c.correct}/${c.total} (${c.percent}%)`).join("<br>")}</td><td class="weak">${esc((r.weakCategories||[]).join("・")||"-")}</td></tr>`).join("")}</tbody></table></div>`}
-window.exportResults=function(){const rows=[["Timestamp","Company","Student","Exam","Correct","Total","Percent","Passed","Category Scores","Weak Categories"]];resultsCache.forEach(r=>rows.push([r.timestamp,r.company,r.studentName,r.examTitle,r.correct,r.total,r.percent,r.passed,(r.categories||[]).map(c=>`${c.category}:${c.correct}/${c.total}(${c.percent}%)`).join(" | "),(r.weakCategories||[]).join(" | ")]));const csv=rows.map(a=>a.map(v=>{v=String(v??"");return /[",\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v}).join(",")).join("\n");const b=new Blob(["\ufeff"+csv],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="cbt_results.csv";a.click();URL.revokeObjectURL(a.href)}
-async function loadExams(){const c=$("content");c.innerHTML="試験を読み込んでいます...";try{const d=await jsonp({action:"adminExams",key:ADMIN_KEY});if(!d.ok)throw 0;examsCache=d.exams;c.innerHTML=`<h2>試験管理</h2><div class="table-wrap"><table class="data-table"><thead><tr><th>ID</th><th>試験名</th><th>問題数</th><th>時間</th><th>合格基準</th><th>公開</th><th>操作</th></tr></thead><tbody>${examsCache.map(e=>`<tr><td>${esc(e.id)}</td><td>${esc(e.title)}</td><td>${e.questionCount}</td><td>${e.durationMinutes}分</td><td>${e.passPercent}%</td><td>${e.published?"公開中":"非公開"}</td><td><button class="btn secondary" onclick="togglePublish('${e.id}',${!e.published})">${e.published?"非公開にする":"公開する"}</button> <button class="btn danger" onclick="deleteExam('${e.id}')">削除</button></td></tr>`).join("")}</tbody></table></div>`}catch{c.innerHTML="読み込みに失敗しました。"}}
-window.togglePublish=async function(id,published){await postAdmin({action:"setPublished",id,published});loadExams()}
-window.deleteExam=async function(id){if(!confirm("この試験を削除しますか？"))return;await postAdmin({action:"deleteExam",id});loadExams()}
-function uploadForm(){$("content").innerHTML=`<h2>新しい試験を追加</h2><div class="field"><label>試験名</label><input id="examTitle" placeholder="例：模擬試験 第1回"></div><div class="field"><label>試験ID</label><input id="examId" placeholder="例：exam01"></div><div class="field"><label>制限時間</label><input id="duration" type="number" value="70"></div><div class="field"><label>合格基準 (%)</label><input id="passPercent" type="number" value="70"></div><div class="field"><label>CSVファイル</label><input id="csvFile" type="file" accept=".csv"></div><div class="code-help">CSV列:
+
+// ======================================================
+// BRAND
+// ======================================================
+
+function adminBrand(
+  title = "模擬試験 管理画面"
+) {
+
+  return `
+
+    <div class="brandbar admin-brandbar">
+
+      <div class="brand-logos">
+
+        <img
+          src="assets/logos/aidem-logo.png"
+          class="brand-logo aidem"
+          alt="AIDEM"
+        >
+
+        <span class="brand-sep">
+          ›
+        </span>
+
+        <img
+          src="assets/logos/aidem-global-logo.png"
+          class="brand-logo global"
+          alt="アイデムグローバル"
+        >
+
+        <span class="brand-sep">
+          ›
+        </span>
+
+        <img
+          src="assets/logos/aitoku-logo.png"
+          class="brand-logo aitoku"
+          alt="アイトク"
+        >
+
+      </div>
+
+
+      <div class="brand-title">
+
+        ${esc(title)}
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+// ======================================================
+// JSONP
+// ======================================================
+
+function jsonp(params) {
+
+  return new Promise(
+    (resolve, reject) => {
+
+      if (
+        typeof CBT_CONFIG === "undefined" ||
+        !CBT_CONFIG.apiUrl
+      ) {
+
+        reject(
+          new Error(
+            "API URLが設定されていません。"
+          )
+        );
+
+        return;
+
+      }
+
+
+      const cb =
+        "cb_" +
+        Date.now() +
+        "_" +
+        Math.random()
+          .toString(36)
+          .slice(2);
+
+
+      const script =
+        document.createElement(
+          "script"
+        );
+
+
+      const timer =
+        setTimeout(
+          () => {
+
+            cleanup();
+
+            reject(
+              new Error(
+                "Timeout"
+              )
+            );
+
+          },
+          15000
+        );
+
+
+      function cleanup() {
+
+        clearTimeout(
+          timer
+        );
+
+
+        try {
+
+          delete window[cb];
+
+        } catch (e) {}
+
+
+        try {
+
+          script.remove();
+
+        } catch (e) {}
+
+      }
+
+
+      window[cb] =
+        data => {
+
+          cleanup();
+
+          resolve(
+            data
+          );
+
+        };
+
+
+      const qs =
+        new URLSearchParams({
+
+          ...params,
+
+          callback:
+            cb,
+
+          _:
+            Date.now()
+
+        });
+
+
+      script.src =
+        CBT_CONFIG.apiUrl +
+        "?" +
+        qs.toString();
+
+
+      script.onerror =
+        () => {
+
+          cleanup();
+
+          reject(
+            new Error(
+              "Network"
+            )
+          );
+
+        };
+
+
+      document.body.appendChild(
+        script
+      );
+
+    }
+  );
+
+}
+
+
+// ======================================================
+// POST
+// ======================================================
+
+async function postAdmin(
+  payload
+) {
+
+  if (
+    typeof CBT_CONFIG === "undefined" ||
+    !CBT_CONFIG.apiUrl
+  ) {
+
+    throw new Error(
+      "API URLが設定されていません。"
+    );
+
+  }
+
+
+  payload.adminKey =
+    ADMIN_KEY;
+
+
+  await fetch(
+    CBT_CONFIG.apiUrl,
+    {
+
+      method:
+        "POST",
+
+      mode:
+        "no-cors",
+
+      headers: {
+
+        "Content-Type":
+          "text/plain;charset=utf-8"
+
+      },
+
+      body:
+        JSON.stringify(
+          payload
+        )
+
+    }
+  );
+
+
+  await new Promise(
+    resolve =>
+      setTimeout(
+        resolve,
+        1000
+      )
+  );
+
+}
+
+
+// ======================================================
+// LOGIN
+// ======================================================
+
+function login() {
+
+  app.innerHTML = `
+
+    ${adminBrand(
+      "管理者ログイン"
+    )}
+
+
+    <div class="page">
+
+
+      <div class="form-card">
+
+
+        <h2>
+          管理者ログイン
+        </h2>
+
+
+        <div class="field">
+
+          <label
+            for="keyInput"
+          >
+
+            管理パスワード
+
+          </label>
+
+
+          <input
+            id="keyInput"
+            type="password"
+            autocomplete="current-password"
+            placeholder="パスワードを入力"
+          >
+
+        </div>
+
+
+        <button
+          id="loginBtn"
+          class="btn primary full"
+          type="button"
+          onclick="doLogin()"
+        >
+
+          ログイン
+
+        </button>
+
+
+        <div
+          id="loginMsg"
+          class="note"
+          style="margin-top:12px"
+        ></div>
+
+
+      </div>
+
+
+    </div>
+
+  `;
+
+
+  const input =
+    $("keyInput");
+
+
+  if (input) {
+
+    input.addEventListener(
+      "keydown",
+      e => {
+
+        if (
+          e.key === "Enter"
+        ) {
+
+          doLogin();
+
+        }
+
+      }
+    );
+
+
+    input.focus();
+
+  }
+
+}
+
+
+// ======================================================
+// DO LOGIN
+// ======================================================
+
+window.doLogin =
+async function() {
+
+  const input =
+    $("keyInput");
+
+
+  const button =
+    $("loginBtn");
+
+
+  const message =
+    $("loginMsg");
+
+
+  const key =
+    String(
+      input?.value || ""
+    ).trim();
+
+
+  if (!key) {
+
+    if (message) {
+
+      message.textContent =
+        "パスワードを入力してください。";
+
+    }
+
+    return;
+
+  }
+
+
+  if (button) {
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "確認中...";
+
+  }
+
+
+  if (message) {
+
+    message.textContent =
+      "パスワードを確認しています...";
+
+  }
+
+
+  try {
+
+    const data =
+      await jsonp({
+
+        action:
+          "adminPing",
+
+        key:
+          key
+
+      });
+
+
+    if (
+      !data ||
+      data.ok !== true
+    ) {
+
+      throw new Error(
+        data?.error ||
+        "ログインできませんでした。"
+      );
+
+    }
+
+
+    ADMIN_KEY =
+      key;
+
+
+    sessionStorage.setItem(
+      "cbt_admin_key",
+      key
+    );
+
+
+    await dashboard();
+
+
+  } catch (error) {
+
+    console.error(
+      "Admin login error:",
+      error
+    );
+
+
+    if (message) {
+
+      message.textContent =
+        "パスワードが正しくないか、通信に失敗しました。";
+
+    }
+
+
+    if (button) {
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "ログイン";
+
+    }
+
+  }
+
+};
+
+
+// ======================================================
+// LOGOUT
+// ======================================================
+
+window.logout =
+function() {
+
+  ADMIN_KEY = "";
+
+
+  sessionStorage.removeItem(
+    "cbt_admin_key"
+  );
+
+
+  login();
+
+};
+
+
+// ======================================================
+// DASHBOARD
+// ======================================================
+
+async function dashboard() {
+
+  app.innerHTML = `
+
+    ${adminBrand(
+      "飲食料品製造業 模擬試験 管理画面"
+    )}
+
+
+    <div class="admin-logout">
+
+      <button
+        class="btn secondary"
+        onclick="logout()"
+      >
+
+        ログアウト
+
+      </button>
+
+    </div>
+
+
+    <div class="page">
+
+
+      <div class="admin-tabs">
+
+
+        <button
+          id="tabResults"
+          class="btn secondary"
+          onclick="showTab('results')"
+        >
+
+          受験結果
+
+        </button>
+
+
+        <button
+          id="tabExams"
+          class="btn secondary"
+          onclick="showTab('exams')"
+        >
+
+          試験管理
+
+        </button>
+
+
+        <button
+          id="tabUpload"
+          class="btn secondary"
+          onclick="showTab('upload')"
+        >
+
+          新しい試験を追加
+
+        </button>
+
+
+      </div>
+
+
+      <div
+        id="content"
+        class="panel"
+      >
+
+        読み込み中...
+
+      </div>
+
+
+    </div>
+
+  `;
+
+
+  await showTab(
+    currentTab
+  );
+
+}
+
+
+// ======================================================
+// TAB
+// ======================================================
+
+window.showTab =
+async function(tab) {
+
+  currentTab =
+    tab;
+
+
+  [
+    "Results",
+    "Exams",
+    "Upload"
+
+  ].forEach(
+    name => {
+
+      const el =
+        $("tab" + name);
+
+
+      if (el) {
+
+        el.classList.remove(
+          "active"
+        );
+
+      }
+
+    }
+  );
+
+
+  const cap =
+    tab.charAt(0).toUpperCase() +
+    tab.slice(1);
+
+
+  const active =
+    $("tab" + cap);
+
+
+  if (active) {
+
+    active.classList.add(
+      "active"
+    );
+
+  }
+
+
+  if (
+    tab === "results"
+  ) {
+
+    await loadResults();
+
+  }
+
+
+  if (
+    tab === "exams"
+  ) {
+
+    await loadExams();
+
+  }
+
+
+  if (
+    tab === "upload"
+  ) {
+
+    uploadForm();
+
+  }
+
+};
+
+
+// ======================================================
+// LOAD RESULTS
+// ======================================================
+
+async function loadResults() {
+
+  const content =
+    $("content");
+
+
+  if (!content) {
+
+    return;
+
+  }
+
+
+  content.innerHTML =
+    "結果を読み込んでいます...";
+
+
+  try {
+
+    const data =
+      await jsonp({
+
+        action:
+          "adminResults",
+
+        key:
+          ADMIN_KEY
+
+      });
+
+
+    if (
+      !data ||
+      data.ok !== true
+    ) {
+
+      throw new Error(
+        data?.error ||
+        "Load failed"
+      );
+
+    }
+
+
+    resultsCache =
+      Array.isArray(
+        data.results
+      )
+
+        ? data.results
+
+        : [];
+
+
+    renderResults();
+
+
+  } catch (error) {
+
+    console.error(
+      "Load results error:",
+      error
+    );
+
+
+    content.innerHTML = `
+
+      <div class="weak">
+
+        結果の読み込みに失敗しました。
+
+      </div>
+
+
+      <div class="note">
+
+        ${esc(
+          error.message
+        )}
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// ======================================================
+// RENDER RESULTS
+// ======================================================
+
+function renderResults() {
+
+  const content =
+    $("content");
+
+
+  if (!content) {
+
+    return;
+
+  }
+
+
+  content.innerHTML = `
+
+    <h2>
+      受験結果
+    </h2>
+
+
+    <div class="toolbar">
+
+
+      <input
+        id="fCompany"
+        placeholder="企業名"
+        oninput="filterResults()"
+      >
+
+
+      <input
+        id="fName"
+        placeholder="氏名"
+        oninput="filterResults()"
+      >
+
+
+      <select
+        id="fPass"
+        onchange="filterResults()"
+      >
+
+        <option value="">
+          すべて
+        </option>
+
+        <option value="true">
+          合格
+        </option>
+
+        <option value="false">
+          不合格
+        </option>
+
+      </select>
+
+
+      <button
+        class="btn primary"
+        onclick="exportResults()"
+      >
+
+        CSV出力
+
+      </button>
+
+
+    </div>
+
+
+    <div
+      id="resultTable"
+    ></div>
+
+  `;
+
+
+  filterResults();
+
+}
+
+
+// ======================================================
+// FILTER RESULTS
+// ======================================================
+
+window.filterResults =
+function() {
+
+  const companyFilter =
+    (
+      $("fCompany")?.value ||
+      ""
+    ).toLowerCase();
+
+
+  const nameFilter =
+    (
+      $("fName")?.value ||
+      ""
+    ).toLowerCase();
+
+
+  const passFilter =
+    $("fPass")?.value ||
+    "";
+
+
+  const rows =
+    resultsCache.filter(
+      r => {
+
+        const company =
+          String(
+            r.company ||
+            ""
+          ).toLowerCase();
+
+
+        const name =
+          String(
+            r.studentName ||
+            ""
+          ).toLowerCase();
+
+
+        const passMatch =
+
+          passFilter === ""
+
+          ||
+
+          String(
+            r.passed
+          ) === passFilter;
+
+
+        return (
+
+          company.includes(
+            companyFilter
+          )
+
+          &&
+
+          name.includes(
+            nameFilter
+          )
+
+          &&
+
+          passMatch
+
+        );
+
+      }
+    );
+
+
+  const table =
+    $("resultTable");
+
+
+  if (!table) {
+
+    return;
+
+  }
+
+
+  if (
+    rows.length === 0
+  ) {
+
+    table.innerHTML = `
+
+      <div class="note">
+
+        該当する受験結果はありません。
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  table.innerHTML = `
+
+    <div class="table-wrap">
+
+
+      <table class="data-table">
+
+
+        <thead>
+
+          <tr>
+
+            <th>
+              日時
+            </th>
+
+            <th>
+              企業名
+            </th>
+
+            <th>
+              氏名
+            </th>
+
+            <th>
+              試験
+            </th>
+
+            <th>
+              得点
+            </th>
+
+            <th>
+              判定
+            </th>
+
+            <th>
+              分野別
+            </th>
+
+            <th>
+              重点復習
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+          ${
+            rows.map(
+              r => `
+
+                <tr>
+
+
+                  <td>
+
+                    ${esc(
+                      r.timestamp
+                    )}
+
+                  </td>
+
+
+                  <td>
+
+                    ${esc(
+                      r.company
+                    )}
+
+                  </td>
+
+
+                  <td>
+
+                    ${esc(
+                      r.studentName
+                    )}
+
+                  </td>
+
+
+                  <td>
+
+                    ${esc(
+                      r.examTitle
+                    )}
+
+                  </td>
+
+
+                  <td>
+
+                    <b>
+
+                      ${r.correct}/${r.total}
+
+                      (${r.percent}%)
+
+                    </b>
+
+                  </td>
+
+
+                  <td
+                    class="${
+                      r.passed
+                        ? "good"
+                        : "weak"
+                    }"
+                  >
+
+                    ${
+                      r.passed
+                        ? "合格"
+                        : "不合格"
+                    }
+
+                  </td>
+
+
+                  <td class="cat-mini">
+
+                    ${
+                      (
+                        r.categories ||
+                        []
+                      )
+                      .map(
+                        c => `
+
+                          ${esc(
+                            c.category
+                          )}:
+
+                          ${c.correct}/${c.total}
+
+                          (${c.percent}%)
+
+                        `
+                      )
+                      .join(
+                        "<br>"
+                      )
+                    }
+
+                  </td>
+
+
+                  <td class="weak">
+
+                    ${
+                      esc(
+                        (
+                          r.weakCategories ||
+                          []
+                        )
+                        .join(
+                          "・"
+                        )
+
+                        ||
+
+                        "-"
+                      )
+                    }
+
+                  </td>
+
+
+                </tr>
+
+              `
+            )
+            .join("")
+          }
+
+
+        </tbody>
+
+
+      </table>
+
+
+    </div>
+
+  `;
+
+};
+
+
+// ======================================================
+// EXPORT CSV
+// ======================================================
+
+window.exportResults =
+function() {
+
+  const rows = [
+
+    [
+
+      "Timestamp",
+
+      "Company",
+
+      "Student",
+
+      "Exam",
+
+      "Correct",
+
+      "Total",
+
+      "Percent",
+
+      "Passed",
+
+      "Category Scores",
+
+      "Weak Categories"
+
+    ]
+
+  ];
+
+
+  resultsCache.forEach(
+    r => {
+
+      rows.push([
+
+        r.timestamp,
+
+        r.company,
+
+        r.studentName,
+
+        r.examTitle,
+
+        r.correct,
+
+        r.total,
+
+        r.percent,
+
+        r.passed,
+
+
+        (
+          r.categories ||
+          []
+        )
+        .map(
+          c =>
+            `${c.category}:${c.correct}/${c.total}(${c.percent}%)`
+        )
+        .join(
+          " | "
+        ),
+
+
+        (
+          r.weakCategories ||
+          []
+        )
+        .join(
+          " | "
+        )
+
+      ]);
+
+    }
+  );
+
+
+  const csv =
+    rows
+    .map(
+      row =>
+
+        row
+        .map(
+          value => {
+
+            value =
+              String(
+                value ??
+                ""
+              );
+
+
+            return (
+              /[",\n]/.test(
+                value
+              )
+            )
+
+              ? `"${value.replace(
+                  /"/g,
+                  '""'
+                )}"`
+
+              : value;
+
+          }
+        )
+        .join(",")
+
+    )
+    .join("\n");
+
+
+  const blob =
+    new Blob(
+
+      [
+        "\ufeff" +
+        csv
+      ],
+
+      {
+
+        type:
+          "text/csv;charset=utf-8"
+
+      }
+
+    );
+
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+
+  link.href =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  link.download =
+    "cbt_results.csv";
+
+
+  link.click();
+
+
+  URL.revokeObjectURL(
+    link.href
+  );
+
+};
+
+
+// ======================================================
+// LOAD EXAMS
+// ======================================================
+
+async function loadExams() {
+
+  const content =
+    $("content");
+
+
+  if (!content) {
+
+    return;
+
+  }
+
+
+  content.innerHTML =
+    "試験を読み込んでいます...";
+
+
+  try {
+
+    const data =
+      await jsonp({
+
+        action:
+          "adminExams",
+
+        key:
+          ADMIN_KEY
+
+      });
+
+
+    if (
+      !data ||
+      data.ok !== true
+    ) {
+
+      throw new Error(
+        data?.error ||
+        "Load failed"
+      );
+
+    }
+
+
+    examsCache =
+      Array.isArray(
+        data.exams
+      )
+
+        ? data.exams
+
+        : [];
+
+
+    content.innerHTML = `
+
+      <h2>
+
+        試験管理
+
+      </h2>
+
+
+      ${
+        examsCache.length
+
+          ? `
+
+            <div class="table-wrap">
+
+
+              <table class="data-table">
+
+
+                <thead>
+
+                  <tr>
+
+                    <th>
+                      ID
+                    </th>
+
+                    <th>
+                      試験名
+                    </th>
+
+                    <th>
+                      問題数
+                    </th>
+
+                    <th>
+                      時間
+                    </th>
+
+                    <th>
+                      合格基準
+                    </th>
+
+                    <th>
+                      公開
+                    </th>
+
+                    <th>
+                      操作
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                  ${
+                    examsCache.map(
+                      exam => `
+
+                        <tr>
+
+
+                          <td>
+
+                            ${esc(
+                              exam.id
+                            )}
+
+                          </td>
+
+
+                          <td>
+
+                            ${esc(
+                              exam.title
+                            )}
+
+                          </td>
+
+
+                          <td>
+
+                            ${exam.questionCount}
+
+                          </td>
+
+
+                          <td>
+
+                            ${exam.durationMinutes}分
+
+                          </td>
+
+
+                          <td>
+
+                            ${exam.passPercent}%
+
+                          </td>
+
+
+                          <td>
+
+                            ${
+                              exam.published
+                                ? "公開中"
+                                : "非公開"
+                            }
+
+                          </td>
+
+
+                          <td>
+
+
+                            <button
+                              class="btn secondary"
+                              onclick="togglePublish(
+                                '${esc(
+                                  exam.id
+                                )}',
+                                ${!exam.published}
+                              )"
+                            >
+
+                              ${
+                                exam.published
+
+                                  ? "非公開にする"
+
+                                  : "公開する"
+                              }
+
+                            </button>
+
+
+                            <button
+                              class="btn danger"
+                              onclick="deleteExam(
+                                '${esc(
+                                  exam.id
+                                )}'
+                              )"
+                            >
+
+                              削除
+
+                            </button>
+
+
+                          </td>
+
+
+                        </tr>
+
+                      `
+                    )
+                    .join("")
+                  }
+
+
+                </tbody>
+
+
+              </table>
+
+
+            </div>
+
+          `
+
+          : `
+
+            <div class="note">
+
+              登録されている試験はありません。
+
+            </div>
+
+          `
+      }
+
+    `;
+
+
+  } catch (error) {
+
+    console.error(
+      "Load exams error:",
+      error
+    );
+
+
+    content.innerHTML = `
+
+      <div class="weak">
+
+        試験の読み込みに失敗しました。
+
+      </div>
+
+
+      <div class="note">
+
+        ${esc(
+          error.message
+        )}
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// ======================================================
+// PUBLISH
+// ======================================================
+
+window.togglePublish =
+async function(
+  id,
+  published
+) {
+
+  try {
+
+    await postAdmin({
+
+      action:
+        "setPublished",
+
+      id:
+        id,
+
+      published:
+        published
+
+    });
+
+
+    await loadExams();
+
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    alert(
+      "更新に失敗しました。"
+    );
+
+  }
+
+};
+
+
+// ======================================================
+// DELETE EXAM
+// ======================================================
+
+window.deleteExam =
+async function(id) {
+
+  if (
+    !confirm(
+      "この試験を削除しますか？"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  try {
+
+    await postAdmin({
+
+      action:
+        "deleteExam",
+
+      id:
+        id
+
+    });
+
+
+    await loadExams();
+
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    alert(
+      "削除に失敗しました。"
+    );
+
+  }
+
+};
+
+
+// ======================================================
+// UPLOAD FORM
+// ======================================================
+
+function uploadForm() {
+
+  const content =
+    $("content");
+
+
+  if (!content) {
+
+    return;
+
+  }
+
+
+  content.innerHTML = `
+
+    <h2>
+
+      新しい試験を追加
+
+    </h2>
+
+
+    <div class="field">
+
+      <label>
+        試験名
+      </label>
+
+      <input
+        id="examTitle"
+        placeholder="例：模擬試験 第1回"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        試験ID
+      </label>
+
+      <input
+        id="examId"
+        placeholder="例：exam01"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        制限時間
+      </label>
+
+      <input
+        id="duration"
+        type="number"
+        value="70"
+        min="1"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        合格基準 (%)
+      </label>
+
+      <input
+        id="passPercent"
+        type="number"
+        value="70"
+        min="0"
+        max="100"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        CSVファイル
+      </label>
+
+      <input
+        id="csvFile"
+        type="file"
+        accept=".csv,text/csv"
+      >
+
+    </div>
+
+
+    <div class="code-help">
+
+CSV列:
+
 No,Category,Question,A,B,C,D,Correct,Explanation
 
 Correct は A / B / C / D
+
 例:
-1,衛生管理,手洗いについて正しいものはどれですか,選択肢A,選択肢B,選択肢C,選択肢D,B,解説</div><button class="btn primary" style="margin-top:15px" onclick="uploadExam()">アップロードして保存</button><div id="uploadMsg" class="note"></div>`}
-window.uploadExam=async function(){const f=$("csvFile").files[0];if(!f){alert("CSVを選択してください。");return}const title=$("examTitle").value.trim(),id=$("examId").value.trim();if(!title||!id){alert("試験名とIDを入力してください。");return}const text=await f.text(),questions=parseCSV(text);if(!questions.length){alert("CSVを読み込めませんでした。");return}$("uploadMsg").textContent=`${questions.length}問を送信中...`;await postAdmin({action:"saveExam",exam:{id,title,subtitle:"飲食料品製造業",durationMinutes:Number($("duration").value)||70,passPercent:Number($("passPercent").value)||70,published:false,questions}});$("uploadMsg").textContent="保存しました。試験管理から公開できます。"}
-function parseCSV(text){const rows=[];let row=[],cell="",q=false;for(let i=0;i<text.length;i++){const ch=text[i],n=text[i+1];if(ch=='"'&&q&&n=='"'){cell+='"';i++}else if(ch=='"'){q=!q}else if(ch==","&&!q){row.push(cell);cell=""}else if((ch=="\n"||ch=="\r")&&!q){if(ch=="\r"&&n=="\n")i++;row.push(cell);if(row.some(x=>x.trim()!==""))rows.push(row);row=[];cell=""}else cell+=ch}row.push(cell);if(row.some(x=>x.trim()!==""))rows.push(row);if(rows.length<2)return[];const hdr=rows[0].map(x=>x.trim().toLowerCase());const idx=n=>hdr.indexOf(n.toLowerCase());return rows.slice(1).map((r,i)=>{const corr=(r[idx("Correct")]||"A").trim().toUpperCase();return{id:Number(r[idx("No")])||i+1,category:r[idx("Category")]||"",question:r[idx("Question")]||"",choices:[r[idx("A")]||"",r[idx("B")]||"",r[idx("C")]||"",r[idx("D")]||""],correct:["A","B","C","D"].indexOf(corr),explanation:r[idx("Explanation")]||""}}).filter(q=>q.question&&q.correct>=0)}
-if(!模擬試験_CONFIG.apiUrl){app.innerHTML=`<div class="form-card"><h2>API URL chưa được cài</h2><p>Hãy deploy Google Apps Script rồi dán URL vào config.js.</p></div>`}else if(ADMIN_KEY){dashboard()}else login();
+
+1,衛生管理,手洗いについて正しいものはどれですか,選択肢A,選択肢B,選択肢C,選択肢D,B,解説
+
+    </div>
+
+
+    <button
+      class="btn primary"
+      style="margin-top:15px"
+      onclick="uploadExam()"
+    >
+
+      アップロードして保存
+
+    </button>
+
+
+    <div
+      id="uploadMsg"
+      class="note"
+      style="margin-top:12px"
+    ></div>
+
+  `;
+
+}
+
+
+// ======================================================
+// UPLOAD EXAM
+// ======================================================
+
+window.uploadExam =
+async function() {
+
+  const file =
+    $("csvFile")
+      ?.files
+      ?.[0];
+
+
+  if (!file) {
+
+    alert(
+      "CSVを選択してください。"
+    );
+
+    return;
+
+  }
+
+
+  const title =
+    $("examTitle")
+      ?.value
+      .trim()
+
+    ||
+
+    "";
+
+
+  const id =
+    $("examId")
+      ?.value
+      .trim()
+
+    ||
+
+    "";
+
+
+  if (
+    !title ||
+    !id
+  ) {
+
+    alert(
+      "試験名とIDを入力してください。"
+    );
+
+    return;
+
+  }
+
+
+  const text =
+    await file.text();
+
+
+  const questions =
+    parseCSV(
+      text
+    );
+
+
+  if (
+    questions.length === 0
+  ) {
+
+    alert(
+      "CSVを読み込めませんでした。"
+    );
+
+    return;
+
+  }
+
+
+  const message =
+    $("uploadMsg");
+
+
+  if (message) {
+
+    message.textContent =
+      `${questions.length}問を送信中...`;
+
+  }
+
+
+  try {
+
+    await postAdmin({
+
+      action:
+        "saveExam",
+
+      exam: {
+
+        id:
+          id,
+
+        title:
+          title,
+
+        subtitle:
+          "飲食料品製造業",
+
+        durationMinutes:
+          Number(
+            $("duration")
+              ?.value
+          )
+          ||
+          70,
+
+        passPercent:
+          Number(
+            $("passPercent")
+              ?.value
+          )
+          ||
+          70,
+
+        published:
+          false,
+
+        questions:
+          questions
+
+      }
+
+    });
+
+
+    if (message) {
+
+      message.textContent =
+        "保存しました。試験管理から公開できます。";
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    if (message) {
+
+      message.textContent =
+        "保存に失敗しました。";
+
+    }
+
+  }
+
+};
+
+
+// ======================================================
+// CSV PARSER
+// ======================================================
+
+function parseCSV(text) {
+
+  const rows = [];
+
+  let row = [];
+
+  let cell = "";
+
+  let quoted =
+    false;
+
+
+  for (
+    let i = 0;
+    i < text.length;
+    i++
+  ) {
+
+    const ch =
+      text[i];
+
+
+    const next =
+      text[i + 1];
+
+
+    if (
+      ch === '"' &&
+      quoted &&
+      next === '"'
+    ) {
+
+      cell += '"';
+
+      i++;
+
+    }
+
+
+    else if (
+      ch === '"'
+    ) {
+
+      quoted =
+        !quoted;
+
+    }
+
+
+    else if (
+      ch === "," &&
+      !quoted
+    ) {
+
+      row.push(
+        cell
+      );
+
+      cell = "";
+
+    }
+
+
+    else if (
+      (
+        ch === "\n" ||
+        ch === "\r"
+      )
+      &&
+      !quoted
+    ) {
+
+      if (
+        ch === "\r" &&
+        next === "\n"
+      ) {
+
+        i++;
+
+      }
+
+
+      row.push(
+        cell
+      );
+
+
+      if (
+        row.some(
+          value =>
+            value.trim() !== ""
+        )
+      ) {
+
+        rows.push(
+          row
+        );
+
+      }
+
+
+      row = [];
+
+      cell = "";
+
+    }
+
+
+    else {
+
+      cell +=
+        ch;
+
+    }
+
+  }
+
+
+  row.push(
+    cell
+  );
+
+
+  if (
+    row.some(
+      value =>
+        value.trim() !== ""
+    )
+  ) {
+
+    rows.push(
+      row
+    );
+
+  }
+
+
+  if (
+    rows.length < 2
+  ) {
+
+    return [];
+
+  }
+
+
+  const headers =
+    rows[0]
+    .map(
+      value =>
+
+        value
+
+        .replace(
+          /^\uFEFF/,
+          ""
+        )
+
+        .trim()
+
+        .toLowerCase()
+
+    );
+
+
+  const idx =
+    name =>
+      headers.indexOf(
+        name.toLowerCase()
+      );
+
+
+  const required =
+    [
+
+      "No",
+
+      "Category",
+
+      "Question",
+
+      "A",
+
+      "B",
+
+      "C",
+
+      "D",
+
+      "Correct"
+
+    ];
+
+
+  if (
+    required.some(
+      name =>
+        idx(name) < 0
+    )
+  ) {
+
+    return [];
+
+  }
+
+
+  return rows
+
+    .slice(1)
+
+    .map(
+      (r, i) => {
+
+        const correctLetter =
+          String(
+
+            r[
+              idx(
+                "Correct"
+              )
+            ]
+
+            ||
+
+            "A"
+
+          )
+          .trim()
+          .toUpperCase();
+
+
+        return {
+
+          id:
+
+            Number(
+              r[
+                idx(
+                  "No"
+                )
+              ]
+            )
+
+            ||
+
+            i + 1,
+
+
+          category:
+
+            r[
+              idx(
+                "Category"
+              )
+            ]
+
+            ||
+
+            "",
+
+
+          question:
+
+            r[
+              idx(
+                "Question"
+              )
+            ]
+
+            ||
+
+            "",
+
+
+          choices: [
+
+            r[
+              idx(
+                "A"
+              )
+            ]
+            || "",
+
+
+            r[
+              idx(
+                "B"
+              )
+            ]
+            || "",
+
+
+            r[
+              idx(
+                "C"
+              )
+            ]
+            || "",
+
+
+            r[
+              idx(
+                "D"
+              )
+            ]
+            || ""
+
+          ],
+
+
+          correct:
+
+            [
+              "A",
+              "B",
+              "C",
+              "D"
+            ]
+            .indexOf(
+              correctLetter
+            ),
+
+
+          explanation:
+
+            idx(
+              "Explanation"
+            ) >= 0
+
+              ? (
+                  r[
+                    idx(
+                      "Explanation"
+                    )
+                  ]
+
+                  ||
+
+                  ""
+                )
+
+              : ""
+
+        };
+
+      }
+    )
+
+    .filter(
+      question =>
+
+        question.question
+
+        &&
+
+        question.correct >= 0
+    );
+
+}
+
+
+// ======================================================
+// START ADMIN
+// ======================================================
+
+function startAdmin() {
+
+  if (
+    typeof CBT_CONFIG ===
+    "undefined"
+  ) {
+
+    app.innerHTML = `
+
+      <div class="form-card">
+
+        <h2>
+
+          config.js を読み込めません
+
+        </h2>
+
+        <p>
+
+          admin.htmlで
+          config.jsを
+          admin.jsより前に
+          読み込んでください。
+
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  if (
+    !CBT_CONFIG.apiUrl
+  ) {
+
+    app.innerHTML = `
+
+      <div class="form-card">
+
+        <h2>
+
+          API URLが設定されていません
+
+        </h2>
+
+        <p>
+
+          config.jsに
+          Google Apps ScriptのURLを
+          設定してください。
+
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  if (
+    ADMIN_KEY
+  ) {
+
+    dashboard();
+
+  }
+
+
+  else {
+
+    login();
+
+  }
+
+}
+
+
+// ======================================================
+// START
+// ======================================================
+
+startAdmin();
