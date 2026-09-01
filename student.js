@@ -1,6 +1,6 @@
 // ======================================================
 // AIDEM TOKUTEI CBT - STUDENT
-// メール認証対応版
+// メール認証 + LOGIN CHARACTER 版
 // ======================================================
 
 const app = document.getElementById("app");
@@ -38,7 +38,6 @@ const MASCOTS = [
   "assets/character-08.png"
 ];
 
-
 function mascotFor(i) {
   return MASCOTS[i % MASCOTS.length];
 }
@@ -49,7 +48,6 @@ function mascotFor(i) {
 // ======================================================
 
 function brandBar(title = "", timer = false) {
-
   return `
     <div class="brandbar">
 
@@ -99,7 +97,6 @@ function brandBar(title = "", timer = false) {
 // ======================================================
 
 function esc(s) {
-
   return String(s ?? "").replace(
     /[&<>"']/g,
     m => ({
@@ -112,130 +109,91 @@ function esc(s) {
   );
 }
 
-
 function clearTimer() {
-
   if (state.timerId) {
-
-    clearInterval(
-      state.timerId
-    );
-
+    clearInterval(state.timerId);
     state.timerId = null;
   }
 }
 
 
 // ======================================================
-// JSONP API
+// JSONP
 // ======================================================
 
 function jsonp(params) {
+  return new Promise((resolve, reject) => {
 
-  return new Promise(
-    (resolve, reject) => {
-
-      if (
-        !CBT_CONFIG.apiUrl
-      ) {
-
-        reject(
-          new Error(
-            "API URLが設定されていません。"
-          )
-        );
-
-        return;
-      }
-
-
-      const cb =
-        "cb_" +
-        Date.now() +
-        "_" +
-        Math.random()
-          .toString(36)
-          .slice(2);
-
-
-      const script =
-        document.createElement(
-          "script"
-        );
-
-
-      const timer =
-        setTimeout(
-          () => {
-
-            cleanup();
-
-            reject(
-              new Error(
-                "Timeout"
-              )
-            );
-
-          },
-          15000
-        );
-
-
-      function cleanup() {
-
-        clearTimeout(timer);
-
-        try {
-          delete window[cb];
-        } catch (e) {}
-
-        try {
-          script.remove();
-        } catch (e) {}
-      }
-
-
-      window[cb] =
-        data => {
-
-          cleanup();
-
-          resolve(data);
-        };
-
-
-      const qs =
-        new URLSearchParams({
-          ...params,
-          callback: cb,
-          _: Date.now()
-        });
-
-
-      script.src =
-        CBT_CONFIG.apiUrl +
-        "?" +
-        qs.toString();
-
-
-      script.onerror =
-        () => {
-
-          cleanup();
-
-          reject(
-            new Error(
-              "Network error"
-            )
-          );
-        };
-
-
-      document.body.appendChild(
-        script
+    if (!CBT_CONFIG.apiUrl) {
+      reject(
+        new Error(
+          "API URLが設定されていません。"
+        )
       );
+      return;
     }
-  );
+
+    const cb =
+      "cb_" +
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .slice(2);
+
+    const script =
+      document.createElement("script");
+
+    const timer =
+      setTimeout(() => {
+        cleanup();
+        reject(
+          new Error("Timeout")
+        );
+      }, 15000);
+
+    function cleanup() {
+      clearTimeout(timer);
+
+      try {
+        delete window[cb];
+      } catch (e) {}
+
+      try {
+        script.remove();
+      } catch (e) {}
+    }
+
+    window[cb] = data => {
+      cleanup();
+      resolve(data);
+    };
+
+    const qs =
+      new URLSearchParams({
+        ...params,
+        callback: cb,
+        _: Date.now()
+      });
+
+    script.src =
+      CBT_CONFIG.apiUrl +
+      "?" +
+      qs.toString();
+
+    script.onerror = () => {
+      cleanup();
+      reject(
+        new Error(
+          "Network error"
+        )
+      );
+    };
+
+    document.body.appendChild(
+      script
+    );
+  });
 }
 
 
@@ -253,9 +211,7 @@ function loginPage() {
 
   app.innerHTML = `
 
-    ${brandBar(
-      CBT_CONFIG.siteTitle
-    )}
+    ${brandBar(CBT_CONFIG.siteTitle)}
 
     <div class="page">
 
@@ -266,17 +222,47 @@ function loginPage() {
         </h1>
 
         <p>
-          受験するには、登録されているメールアドレスを入力してください。
+          本番に近い形式で練習できます。
         </p>
 
       </div>
 
 
-      <div class="form-card">
+      <div class="form-card login-card">
+
+
+        <div class="login-main-character">
+
+          <img
+            src="assets/character-01.png"
+            alt=""
+          >
+
+        </div>
+
+
+        <img
+          src="assets/character-06.png"
+          class="login-deco login-deco-left"
+          alt=""
+        >
+
+
+        <img
+          src="assets/character-07.png"
+          class="login-deco login-deco-right"
+          alt=""
+        >
+
 
         <h2>
           受験者確認
         </h2>
+
+
+        <p class="login-guide">
+          登録されているメールアドレスを入力してください。
+        </p>
 
 
         <div class="field">
@@ -310,6 +296,7 @@ function loginPage() {
           style="margin-top:12px"
         ></div>
 
+
       </div>
 
     </div>
@@ -318,7 +305,6 @@ function loginPage() {
 
   const input =
     $("emailInput");
-
 
   if (input) {
 
@@ -329,12 +315,11 @@ function loginPage() {
         if (
           e.key === "Enter"
         ) {
-
           checkEmail();
         }
+
       }
     );
-
 
     input.focus();
   }
@@ -357,7 +342,6 @@ async function() {
   const message =
     $("emailMessage");
 
-
   const email =
     String(
       input?.value || ""
@@ -369,7 +353,6 @@ async function() {
   if (!email) {
 
     if (message) {
-
       message.textContent =
         "メールアドレスを入力してください。";
     }
@@ -383,7 +366,6 @@ async function() {
   ) {
 
     if (message) {
-
       message.textContent =
         "正しいメールアドレスを入力してください。";
     }
@@ -438,7 +420,9 @@ async function() {
       data.allowed !== true
     ) {
 
-      state.authorized = false;
+      state.authorized =
+        false;
+
 
       if (message) {
 
@@ -457,7 +441,8 @@ async function() {
 
       if (button) {
 
-        button.disabled = false;
+        button.disabled =
+          false;
 
         button.textContent =
           "確認する";
@@ -467,15 +452,17 @@ async function() {
     }
 
 
-    // 認証成功
     state.email =
-      data.email || email;
+      data.email ||
+      email;
 
     state.studentName =
-      data.studentName || "";
+      data.studentName ||
+      "";
 
     state.company =
-      data.company || "";
+      data.company ||
+      "";
 
     state.authorized =
       true;
@@ -501,7 +488,8 @@ async function() {
 
     if (button) {
 
-      button.disabled = false;
+      button.disabled =
+        false;
 
       button.textContent =
         "確認する";
@@ -511,17 +499,17 @@ async function() {
 
 
 // ======================================================
-// HOME / EXAM LIST
+// HOME
 // ======================================================
 
 async function home() {
 
   clearTimer();
 
-  state.locked = false;
+  state.locked =
+    false;
 
 
-  // メール認証前ならログイン画面へ
   if (
     !state.authorized
   ) {
@@ -561,41 +549,59 @@ async function home() {
           受験者情報
         </h3>
 
+
         <div class="student-info">
 
           <div>
+
             <small>
               メールアドレス
             </small>
+
             <br>
+
             <b>
               ${esc(state.email)}
             </b>
+
           </div>
+
 
           <br>
 
+
           <div>
+
             <small>
               氏名
             </small>
+
             <br>
+
             <b>
               ${esc(state.studentName)}
             </b>
+
           </div>
+
 
           <br>
 
+
           <div>
+
             <small>
               企業名
             </small>
+
             <br>
+
             <b>
               ${esc(state.company)}
             </b>
+
           </div>
+
 
         </div>
 
@@ -621,6 +627,7 @@ async function home() {
         </div>
 
       </div>
+
 
     </div>
   `;
@@ -742,7 +749,7 @@ async function home() {
 
 
 // ======================================================
-// STUDENT LOGOUT
+// LOGOUT
 // ======================================================
 
 window.studentLogout =
@@ -750,14 +757,12 @@ function() {
 
   clearTimer();
 
-
   state.email = "";
   state.company = "";
   state.studentName = "";
   state.authorized = false;
   state.exam = null;
   state.locked = false;
-
 
   loginPage();
 };
@@ -857,6 +862,7 @@ async function(id) {
             ${esc(state.email)}
           </b>
 
+
           <br><br>
 
 
@@ -869,6 +875,7 @@ async function(id) {
           <b>
             ${esc(state.company)}
           </b>
+
 
           <br><br>
 
@@ -971,7 +978,6 @@ function() {
   if (
     !state.exam
   ) {
-
     return;
   }
 
@@ -1173,9 +1179,7 @@ function renderExam() {
 
 
           <div class="question">
-
             ${esc(q.question)}
-
           </div>
 
 
@@ -1195,20 +1199,16 @@ function renderExam() {
                 >
 
                   <span class="letter">
-
                     ${
                       String.fromCharCode(
                         65 + i
                       )
                     }
-
                   </span>
 
 
                   <span>
-
                     ${esc(choice)}
-
                   </span>
 
                 </div>
@@ -1279,7 +1279,6 @@ function renderGrid() {
   const grid =
     $("questionGrid");
 
-
   if (!grid) return;
 
 
@@ -1312,9 +1311,7 @@ function renderGrid() {
 
           onclick="jumpQ(${i})"
         >
-
           ${i + 1}
-
         </button>
 
       `
@@ -1335,11 +1332,9 @@ function(i) {
     return;
   }
 
-
   state.answers[
     state.current
   ] = i;
-
 
   renderExam();
 };
@@ -1354,14 +1349,12 @@ function() {
     return;
   }
 
-
   state.marked[
     state.current
   ] =
     !state.marked[
       state.current
     ];
-
 
   renderExam();
 };
@@ -1390,7 +1383,6 @@ function() {
   ) {
     return;
   }
-
 
   if (
     state.current <
@@ -1423,7 +1415,7 @@ function(i) {
 
 
 // ======================================================
-// SUBMIT CONFIRMATION
+// SUBMIT CONFIRM
 // ======================================================
 
 window.confirmSubmit =
@@ -1547,7 +1539,7 @@ function updateTimer() {
 
 
 // ======================================================
-// SUBMIT EXAM
+// SUBMIT
 // ======================================================
 
 async function submitExam(
@@ -1584,7 +1576,6 @@ async function submitExam(
     examId:
       state.exam.id,
 
-    // ★ メールを送信
     email:
       state.email,
 
@@ -1669,7 +1660,7 @@ submitExam;
 
 
 // ======================================================
-// POST + RESULT POLLING
+// POST + POLLING
 // ======================================================
 
 async function postOpaqueThenJsonp(
@@ -1714,7 +1705,6 @@ async function postOpaqueThenJsonp(
   );
 
 
-  // Apps Scriptの処理完了を待つ
   for (
     let i = 0;
     i < 15;
@@ -1793,9 +1783,7 @@ function renderResult(
 
 
       <div class="score">
-
         ${result.percent}%
-
       </div>
 
 
